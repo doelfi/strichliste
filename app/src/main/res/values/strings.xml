@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">strichliste</string>
+    <string name="text_button_huewa">"HüWa"</string>
+    <string name="text_button_settings">"Settings"</string>
+    <string name="text_button_hint">"Hint"</string>
+
+    <string name="text_button_newGast">"NewGast"</string>
+    <string name="text_button_excelActivity">"ExcelActivity"</string>
+</resources>
