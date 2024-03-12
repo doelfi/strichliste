@@ -6,4 +6,6 @@
 
     <string name="text_button_newGast">"NewGast"</string>
     <string name="text_button_excelActivity">"ExcelActivity"</string>
+
+    <string name="text_button_Useless">"Useless"</string>
 </resources>

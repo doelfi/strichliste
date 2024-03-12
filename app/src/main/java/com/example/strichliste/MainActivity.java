@@ -1,11 +1,5 @@
 package com.example.strichliste;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.room.Room;
-import androidx.room.RoomDatabase;
-import androidx.sqlite.db.SupportSQLiteDatabase;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -14,11 +8,17 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.EditText;
-import android.widget.Button;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.room.Room;
+import androidx.room.RoomDatabase;
+import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             else {
                     Toast.makeText(getApplicationContext(), "Leider falsch.", Toast.LENGTH_LONG).show();
                 }*/
-            Intent intent = new Intent(this, DrinkActivity.class);
+            Intent intent = new Intent(this, GuestActivity.class);
             startActivity(intent);
         }
         else if (view == btnSettings){

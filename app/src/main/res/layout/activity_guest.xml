@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ExcelActivity"
-    android:id="@+id/linear_Layout"
+    tools:context=".GuestActivity"
     android:stretchColumns="0,1,2">
     <TableRow
         android:id="@+id/row1">
