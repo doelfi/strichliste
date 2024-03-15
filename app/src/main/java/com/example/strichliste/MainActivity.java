@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             else {
                     Toast.makeText(getApplicationContext(), "Leider falsch.", Toast.LENGTH_LONG).show();
                 }*/
-            Intent intent = new Intent(this, GuestActivity.class);
+            Intent intent = new Intent(this, GastActivity.class);
             startActivity(intent);
         }
         else if (view == btnSettings){

@@ -1,18 +1,19 @@
 package com.example.strichliste;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.room.Room;
-import androidx.room.RoomDatabase;
-import androidx.sqlite.db.SupportSQLiteDatabase;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.room.Room;
+import androidx.room.RoomDatabase;
+import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import java.util.Date;
 import java.util.List;
@@ -28,6 +29,7 @@ public class DrinkActivity extends AppCompatActivity {
     Button newGast;
 
     Button btnExcelActivity;
+    TextView tvGastName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +38,8 @@ public class DrinkActivity extends AppCompatActivity {
         setContentView(R.layout.activity_drink);
 
         newGast = findViewById(R.id.btnNewPerson);
+
+        tvGastName = findViewById(R.id.tvGastName);
 
         btnExcelActivity = findViewById(R.id.btnExcelActivity);
 
@@ -76,6 +80,12 @@ public class DrinkActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        Intent intent = getIntent();
+        String gastName = intent.getStringExtra("gastName");
+
+        tvGastName.setText(gastName);
+        tvGastName.setVisibility(View.VISIBLE);
     }
 
     public void addGastInBackground(Gast gast){
