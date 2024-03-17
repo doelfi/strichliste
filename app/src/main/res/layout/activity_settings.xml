@@ -27,12 +27,12 @@
         android:textStyle="bold" />
 
     <Button
-        android:id="@+id/btnSettings"
+        android:id="@+id/btnPickFromFiles"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="300dp"
         android:layout_marginRight="300dp"
-        android:text="@string/text_button_settings" />
+        android:text="@string/text_button_Pick_From_Files" />
 
     <Button
         android:id="@+id/btnHint"

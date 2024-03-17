@@ -8,4 +8,5 @@
     <string name="text_button_excelActivity">"ExcelActivity"</string>
 
     <string name="text_button_Useless">"Useless"</string>
+    <string name="text_button_Pick_From_Files">"Pick From Files"</string>
 </resources>

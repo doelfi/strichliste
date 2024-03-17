@@ -4,19 +4,51 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class SettingsActivity extends AppCompatActivity {
 
     Button btnHueWa;
-    Button btnSettings;
+    Button btnPickFromFiles;
+
+    String TAG = "SettingsActivity";
+
+    public static List<String> liste = new ArrayList<String>();
+    private static String FILE_NAME;
+
     Button btnHint;
     TextView tvHint;
     EditText edText;
@@ -44,11 +76,11 @@ public class SettingsActivity extends AppCompatActivity {
         edText = findViewById(R.id.edText);
 
         btnHueWa = findViewById(R.id.btnHueWa);
-        btnSettings = findViewById(R.id.btnSettings);
+        btnPickFromFiles = findViewById(R.id.btnPickFromFiles);
         btnHint = findViewById(R.id.btnHint);
 
         btnHueWa.setOnClickListener(this::onClick);
-        btnSettings.setOnClickListener(this::onClick);
+        btnPickFromFiles.setOnClickListener(this::onClick);
         btnHint.setOnClickListener(this::onClick);
     }
 
@@ -63,17 +95,103 @@ public class SettingsActivity extends AppCompatActivity {
             else {
                     Toast.makeText(getApplicationContext(), "Leider falsch.", Toast.LENGTH_LONG).show();
                 }*/
-            Intent intent = new Intent(this, GastActivity.class);
+            Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
         }
-        else if (view == btnSettings){
+        else if (view == btnPickFromFiles){
             //Toast.makeText(getApplicationContext(), "Lösung: " + companyName, Toast.LENGTH_LONG).show();
-            String newName;
-            newName = edText.getText().toString();
+            //String newName;
+            //newName = edText.getText().toString();
+            String externalStorage = Environment.getExternalStorageState();
+
+            Toast.makeText(SettingsActivity.this, externalStorage, Toast.LENGTH_LONG);
+            mGetContent.launch("*/*");
         }
         else if (view == btnHint){
             tvHint.setText("Erster Buchstabe: " + companyName.substring(0, 1));
             tvHint.setVisibility(View.VISIBLE);
+        }
+    }
+    ActivityResultLauncher<String> mGetContent = registerForActivityResult(new ActivityResultContracts.GetContent(),
+            new ActivityResultCallback<Uri>() {
+                @Override
+                public void onActivityResult(Uri uri) {
+                    // Handle the returned Uri
+                    File file;
+                    String path = uri.getPath(); // raw:/storage/emulated/0/Download/getraenkeUndGaeste.xlsx need file:/ ...
+                    Log.e(TAG, path);
+
+                    // @ToDo: hardcoded!!! always else branch ???
+                    if (path.contains("raw")) {
+                        path = path.replace("raw:/storage/emulated/0/", "");
+                        file = new File(Environment.getExternalStorageDirectory(), path);
+                    } else {
+                        FILE_NAME = "/KopieCannstatterHütteDatenbank.xlsm";
+                        file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS + FILE_NAME).toURI());
+                        Log.e(TAG, "real name " + (Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS + FILE_NAME).toURI()));
+                    }
+                    createGaesteListInBackground(file);
+                }
+            });
+    public void createGaesteListInBackground(File file){
+        ExecutorService executorService = Executors.newSingleThreadExecutor(); //newFixedThreadPool(1);//
+        Handler handler = new Handler(Looper.getMainLooper());
+        liste = new ArrayList<String>();
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                // background task
+                createGetraenkeList(file);
+
+                // on finishing task
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(SettingsActivity.this, "Created Liste", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        });
+    }
+    public void createGetraenkeList(File file) {
+        Log.e(TAG, "I got the file");
+
+        try {
+            FileInputStream fileInputStream = new FileInputStream(file);
+            Log.e(TAG, "Reading from Excel" + fileInputStream);
+            Workbook workbook = new XSSFWorkbook(fileInputStream);
+            DataFormatter dataFormatter = new DataFormatter();
+            // Get Datenbank sheet
+            Sheet sh = workbook.getSheetAt(3);
+            Log.e(TAG, "Sheet name: " + sh.getSheetName());
+
+            Iterator<Row> iterator = sh.iterator();
+            while (iterator.hasNext()) {
+                String cellValue = ".";
+                Row row = iterator.next();
+                Iterator<Cell> cellIterator = row.iterator();
+                while (cellIterator.hasNext()) {
+                    // Call cellIterator.next() twice because I need 2nd column
+                    Cell cell = cellIterator.next();
+                    cell = cellIterator.next();
+                    cellValue = dataFormatter.formatCellValue(cell);
+                    // Log.e(TAG, "Cell value: " + cellValue);
+                    liste.add(cellValue);
+                    break;
+                }
+                if (cellValue.startsWith("CONCATENATE")){
+                    Log.e(TAG, "No (more) values in Datenbank");
+                    break;
+                }
+            }
+            Log.e(TAG, "fertige Liste: " + liste);
+            ((MyGlobalVariables) this.getApplication()).setGaesteListe((ArrayList<String>) liste);
+            Log.e(TAG, "globale Liste: " + ((MyGlobalVariables) this.getApplication()).getGaesteListe());
+            workbook.close();
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -115,4 +233,6 @@ public class SettingsActivity extends AppCompatActivity {
             return false;
         }
     }
+
+
 }
