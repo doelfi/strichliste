@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
 
     <application
+        android:name=".MyGlobalVariables"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -15,8 +16,10 @@
         android:roundIcon="@drawable/logo_gruene_schleife"
         android:supportsRtl="true"
         android:theme="@style/Theme.Strichliste"
-        android:name=".MyGlobalVariables"
         tools:targetApi="31">
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="false" />
         <activity
             android:name=".GastActivity"
             android:exported="false" />
