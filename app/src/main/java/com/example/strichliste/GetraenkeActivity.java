@@ -134,7 +134,7 @@ public class GetraenkeActivity extends AppCompatActivity {
 
     private void createButtons(List<String> liste) {
         int i = 0;
-        TableLayout.LayoutParams layoutParams = new TableLayout.LayoutParams(-2, -2);
+        TableLayout.LayoutParams layoutParams = new TableLayout.LayoutParams(-2, 150);
         TableLayout.LayoutParams layoutParams2 = new TableLayout.LayoutParams(0, 10);
         int column = 1;
         LinearLayout layout;

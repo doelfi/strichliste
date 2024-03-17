@@ -1,44 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".GetraenkeActivity"
-    android:id="@+id/linear_Layout"
-    android:stretchColumns="0,1,2">
-    <TableRow
-        android:id="@+id/row1">
-        <LinearLayout
+    android:id="@+id/linear_Layout">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TableLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:id = "@+id/column1">
-        </LinearLayout>
+            android:stretchColumns="0,1,2">
+            <TableRow
+                android:id="@+id/row1">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:id = "@+id/column1">
+                </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:id = "@+id/column2">
-        </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:id = "@+id/column2">
+                </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:id = "@+id/column3">
-        </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:id = "@+id/column3">
+                </LinearLayout>
 
-    </TableRow>
+            </TableRow>
+        </TableLayout>
+    </ScrollView>
 
-</TableLayout>
+</LinearLayout>
