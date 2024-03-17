@@ -209,7 +209,7 @@ public class GetraenkeActivity extends AppCompatActivity {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        Log.e(TAG, "Bestellung hinzugefügt" + gast.name);
+                        Log.e(TAG, "Bestellung hinzugefügt " + gast.name);
                     }
                 });
             }

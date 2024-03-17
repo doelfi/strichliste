@@ -69,13 +69,15 @@ public class GastActivity extends AppCompatActivity {
                 public void onActivityResult(Uri uri) {
                     // Handle the returned Uri
                     File file;
-                    String path = uri.getLastPathSegment(); // raw:/storage/emulated/0/Download/getraenkeUndGaeste.xlsx need file:/ ...
+                    String path = uri.getPath(); // raw:/storage/emulated/0/Download/getraenkeUndGaeste.xlsx need file:/ ...
+                    Log.e(TAG, path);
 
+                    // @ToDo: hardcoded!!! always else branch ???
                     if (path.contains("raw")) {
                         path = path.replace("raw:/storage/emulated/0/", "");
                         file = new File(Environment.getExternalStorageDirectory(), path);
                     } else {
-                        FILE_NAME = "/KopieCannstatterHütteDatenbank.xlsm"; // "/getraenkeUndGaeste.xlsx"
+                        FILE_NAME = "/KopieCannstatterHütteDatenbank.xlsm";
                         file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS + FILE_NAME).toURI());
                         Log.e(TAG, "real name " + (Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS + FILE_NAME).toURI()));
                     }
@@ -84,7 +86,7 @@ public class GastActivity extends AppCompatActivity {
             });
 
     public void createGaesteListInBackground(File file){
-        ExecutorService executorService = Executors.newFixedThreadPool(1);//newSingleThreadExecutor();
+        ExecutorService executorService = Executors.newSingleThreadExecutor(); //newFixedThreadPool(1);//
         Handler handler = new Handler(Looper.getMainLooper());
         liste = new ArrayList<String>();
         executorService.execute(new Runnable() {
@@ -98,7 +100,7 @@ public class GastActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         Toast.makeText(GastActivity.this, "Created Liste", Toast.LENGTH_LONG).show();
-                        createButtons(liste);
+                        createButtons(((MyGlobalVariables) GastActivity.this.getApplication()).getGaesteListe());
                     }
                 });
             }
@@ -130,12 +132,14 @@ public class GastActivity extends AppCompatActivity {
                     liste.add(cellValue);
                     break;
                 }
-                if (cellValue.startsWith("CONCATENATE") || cellValue.startsWith(".")){
+                if (cellValue.startsWith("CONCATENATE")){
                     Log.e(TAG, "No (more) values in Datenbank");
                     break;
                 }
             }
             Log.e(TAG, "fertige Liste: " + liste);
+            ((MyGlobalVariables) this.getApplication()).setGaesteListe((ArrayList<String>) liste);
+            Log.e(TAG, "globale Liste: " + ((MyGlobalVariables) this.getApplication()).getGaesteListe());
             workbook.close();
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
@@ -170,7 +174,6 @@ public class GastActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(GastActivity.this, GetraenkeActivity.class);
-                    // @ToDo: Does this give me the value of newBtn at runtime ???
                     intent.putExtra("gastName", gastName);
                     startActivity(intent);
                 }
