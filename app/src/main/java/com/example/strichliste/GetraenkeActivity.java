@@ -32,12 +32,11 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class ExcelActivity extends AppCompatActivity {
+public class GetraenkeActivity extends AppCompatActivity {
 
     Button newBtn;
     Space newSpace;
-
-    //private static final String NAME = "/storage/emulated/0/Download/getraenkeUndGaeste.xlsx";
+    String gastName;
     private static final String NAME = "/getraenkeUndGaeste.xlsx";
     public static List<String> liste = new ArrayList<String>();
     @Override
@@ -46,7 +45,10 @@ public class ExcelActivity extends AppCompatActivity {
         setContentView(R.layout.activity_excel);
 
         // MyGlobalVariables myGlobalVariables;
-        createGetraenkeListInBackground(ExcelActivity.this, NAME);
+        createGetraenkeListInBackground(GetraenkeActivity.this, NAME);
+
+        Intent intent = getIntent();
+        gastName = intent.getStringExtra("gastName");
     }
 
     public void createGetraenkeListInBackground(Context context, String NAME){
@@ -61,7 +63,7 @@ public class ExcelActivity extends AppCompatActivity {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(ExcelActivity.this, "Created Liste", Toast.LENGTH_LONG).show();
+                        Toast.makeText(GetraenkeActivity.this, "Created Liste", Toast.LENGTH_LONG).show();
                         createButtons(liste);
                     }
                 });
@@ -71,56 +73,33 @@ public class ExcelActivity extends AppCompatActivity {
 
     public void createGetraenkeList(Context context, String NAME) {
         File file = new File(context.getExternalFilesDir(null), NAME);
-        // File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS + "/getraenkeUndGaeste.xlsx").toURI());
-        //File file = new File(docsFolder.);
-        //FileInputStream fileInputStream = null;
         String TAG = "ExcelActivity";
         Log.e(TAG, "I got the file");
         //Log.e(TAG, "External Storage state: " + Environment.getExternalStorageState());
 
         try {
-            //fileInputStream = new FileInputStream(file);
-            // Uri uri = Uri.parse(NAME);
-            // FileInputStream fileInputStream = new FileInputStream(new File(uri.getPath()));
-            // FileInputStream fileInputStream = new FileInputStream(new File(NAME));
+            liste = new ArrayList<String>();
             FileInputStream fileInputStream = new FileInputStream(file);
             Log.e(TAG, "Reading from Excel" + fileInputStream);
             Workbook workbook = new XSSFWorkbook(fileInputStream);
             DataFormatter dataFormatter = new DataFormatter();
-            Iterator<Sheet> sheets = workbook.sheetIterator();
-            //int sheet_number = 0;
-            while (sheets.hasNext()) {
-                        /*if (sheet_number == 0) {
-                            liste = MyGlobalVariables.getGetraenkeListe();
-                            sheet_number += 1;
-                        } else {
-                            liste = MyGlobalVariables.getGaesteListe();
-                        }*/
-                Sheet sh = sheets.next();
-                //System.out.println("Sheet name is "+sh.getSheetName());
-                //System.out.println("_______________");
 
-                Iterator<Row> iterator = sh.iterator();
-                while (iterator.hasNext()) {
-                    Row row = iterator.next();
-                    Iterator<Cell> cellIterator = row.iterator();
-                    while (cellIterator.hasNext()) {
-                        Cell cell = cellIterator.next();
-                        String cellValue = dataFormatter.formatCellValue(cell);
-                        //System.out.println(cellValue+"\t");
-                        liste.add(cellValue);
-                        break;
-                    }
-                    //System.out.println();
+            Sheet sh = workbook.getSheetAt(0);
+
+            Iterator<Row> iterator = sh.iterator();
+            while (iterator.hasNext()) {
+                Row row = iterator.next();
+                Iterator<Cell> cellIterator = row.iterator();
+                while (cellIterator.hasNext()) {
+                    Cell cell = cellIterator.next();
+                    String cellValue = dataFormatter.formatCellValue(cell);
+                    //System.out.println(cellValue+"\t");
+                    liste.add(cellValue);
+                    break;
                 }
-                //System.out.println("Liste:");
-                //System.out.println(liste);
-                //System.out.println();
-                Log.e(TAG, "fertige Liste: " + liste);
             }
-
+            Log.e(TAG, "fertige Liste: " + liste);
             workbook.close();
-
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
@@ -134,9 +113,8 @@ public class ExcelActivity extends AppCompatActivity {
         TableLayout.LayoutParams layoutParams2 = new TableLayout.LayoutParams(0, 10);
         int column = 1;
         LinearLayout layout;
-        // @ToDo: hardcoded, dass Einnahmen Verkaufspreise nicht mit drin sind und nur bis letztes Getränk
-        //for (i=2; i < liste.size(); i++) {
-        for (i=2; i < 31; i++) {
+        // @ToDo: hardcoded, dass Einnahmen Verkaufspreise nicht mit drin sind
+        for (i=2; i < liste.size(); i++) {
             if (column == 1) {
                 layout = findViewById(R.id.column1);
             } else if (column == 2) {
@@ -153,7 +131,7 @@ public class ExcelActivity extends AppCompatActivity {
             newBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(ExcelActivity.this, MainActivity.class);
+                    Intent intent = new Intent(GetraenkeActivity.this, MainActivity.class);
                     startActivity(intent);
                 }
             });

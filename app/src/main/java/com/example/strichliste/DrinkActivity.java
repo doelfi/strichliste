@@ -76,7 +76,7 @@ public class DrinkActivity extends AppCompatActivity {
         btnExcelActivity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), ExcelActivity.class);
+                Intent intent = new Intent(v.getContext(), GetraenkeActivity.class);
                 startActivity(intent);
             }
         });

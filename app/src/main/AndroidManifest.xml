@@ -23,7 +23,7 @@
             android:name=".GuestActivity"
             android:exported="false" />
         <activity
-            android:name=".ExcelActivity"
+            android:name=".GetraenkeActivity"
             android:exported="false" />
         <activity
             android:name=".DrinkActivity"

@@ -59,7 +59,6 @@ public class GastActivity extends AppCompatActivity {
                 String externalStorage = Environment.getExternalStorageState();
 
                 Toast.makeText(GastActivity.this, externalStorage, Toast.LENGTH_LONG);
-                //showFileChooser();
                 mGetContent.launch("*/*");
             }
         });
@@ -123,7 +122,7 @@ public class GastActivity extends AppCompatActivity {
                 Row row = iterator.next();
                 Iterator<Cell> cellIterator = row.iterator();
                 while (cellIterator.hasNext()) {
-                    // Call cellIterstor.next() twice because I need 2nd column
+                    // Call cellIterator.next() twice because I need 2nd column
                     Cell cell = cellIterator.next();
                     cell = cellIterator.next();
                     cellValue = dataFormatter.formatCellValue(cell);
@@ -170,7 +169,7 @@ public class GastActivity extends AppCompatActivity {
             newBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(GastActivity.this, DrinkActivity.class);
+                    Intent intent = new Intent(GastActivity.this, GetraenkeActivity.class);
                     // @ToDo: Does this give me the value of newBtn at runtime ???
                     intent.putExtra("gastName", gastName);
                     startActivity(intent);
