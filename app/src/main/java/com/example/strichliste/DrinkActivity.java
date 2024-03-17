@@ -90,21 +90,17 @@ public class DrinkActivity extends AppCompatActivity {
 
     public void addGastInBackground(Gast gast){
         ExecutorService executorService = Executors.newSingleThreadExecutor();
-
         Handler handler = new Handler(Looper.getMainLooper());
-
         executorService.execute(new Runnable() {
             @Override
             public void run() {
                 // background task
                 gastDB.getGastDao().addGast(gast);
-
                 // on finishing task
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
                         Toast.makeText(DrinkActivity.this, "Added to Database", Toast.LENGTH_LONG).show();
-
                     }
                 });
             }

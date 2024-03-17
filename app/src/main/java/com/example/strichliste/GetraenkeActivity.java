@@ -1,6 +1,7 @@
 package com.example.strichliste;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,7 +14,12 @@ import android.widget.Space;
 import android.widget.TableLayout;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.room.Room;
+import androidx.room.RoomDatabase;
+import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -27,6 +33,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -37,6 +44,8 @@ public class GetraenkeActivity extends AppCompatActivity {
     Button newBtn;
     Space newSpace;
     String gastName;
+    GastDatabase gastDB;
+    String TAG = "ExcelActivity";
     private static final String NAME = "/getraenkeUndGaeste.xlsx";
     public static List<String> liste = new ArrayList<String>();
     @Override
@@ -44,11 +53,28 @@ public class GetraenkeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_excel);
 
-        // MyGlobalVariables myGlobalVariables;
         createGetraenkeListInBackground(GetraenkeActivity.this, NAME);
 
         Intent intent = getIntent();
         gastName = intent.getStringExtra("gastName");
+
+        receiveDatabase();
+        }
+
+    public void receiveDatabase(){
+        RoomDatabase.Callback mainCallBack = new RoomDatabase.Callback() {
+            @Override
+            public void onCreate(@NonNull SupportSQLiteDatabase db) {
+                super.onCreate(db);
+            }
+
+            @Override
+            public void onDestructiveMigration(@NonNull SupportSQLiteDatabase db) {
+                super.onDestructiveMigration(db);
+            }
+        };
+
+        gastDB = Room.databaseBuilder(getApplicationContext(), GastDatabase.class, "AstDB").addCallback(mainCallBack).build();
     }
 
     public void createGetraenkeListInBackground(Context context, String NAME){
@@ -73,7 +99,6 @@ public class GetraenkeActivity extends AppCompatActivity {
 
     public void createGetraenkeList(Context context, String NAME) {
         File file = new File(context.getExternalFilesDir(null), NAME);
-        String TAG = "ExcelActivity";
         Log.e(TAG, "I got the file");
         //Log.e(TAG, "External Storage state: " + Environment.getExternalStorageState());
 
@@ -128,11 +153,11 @@ public class GetraenkeActivity extends AppCompatActivity {
             newBtn.setBackgroundColor(getColor(R.color.gruene_schleife));
             newBtn.setTextColor(getColor(R.color.white));
             newBtn.setTextSize(20);
+            String getraenkeName = newBtn.getText().toString();
             newBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(GetraenkeActivity.this, MainActivity.class);
-                    startActivity(intent);
+                    confirmBestellung(getraenkeName);
                 }
             });
             newSpace = new Space(this);
@@ -144,6 +169,50 @@ public class GetraenkeActivity extends AppCompatActivity {
                 column ++;
             }
         }
+    }
 
+    private void confirmBestellung(String getraenkeName){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Möchtest du, " + gastName + ", wirklich Folgendes bestellen?\n" +
+                        getraenkeName)
+                .setTitle("Bestellbestätigung")
+                .setCancelable(false)
+                .setNegativeButton("Abbrechen", ((dialog, which) -> dialog.dismiss()))
+                .setPositiveButton("Bestätigen", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        int anzahl = 1;
+                        Date zeitpunkt = new Date();
+
+                        Gast bestellung = new Gast(gastName, getraenkeName, anzahl, zeitpunkt);
+                        addGastInBackground(bestellung);
+
+                        Intent intent = new Intent(GetraenkeActivity.this, MainActivity.class);
+                        startActivity(intent);
+
+                        dialog.dismiss();
+                    }
+                });
+        builder.show();
+    }
+    public void addGastInBackground(Gast gast){
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+        Log.e(TAG, "ok ");
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                // background task
+                gastDB.getGastDao().addGast(gast);
+                // on finishing task
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.e(TAG, "Bestellung hinzugefügt" + gast.name);
+                    }
+                });
+            }
+        });
     }
 }
