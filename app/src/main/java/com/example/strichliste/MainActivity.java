@@ -81,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 layout = findViewById(R.id.column3);
             }
+            // @ToDo: change button syle via style="@android:style/Widget.Button.Inset"
             newBtn = new Button(this);
             newBtn.setText(liste.get(i));
             newBtn.setLayoutParams(layoutParams);

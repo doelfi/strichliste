@@ -1,5 +1,6 @@
 package com.example.strichliste;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -20,7 +21,11 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.room.Room;
+import androidx.room.RoomDatabase;
+import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -49,7 +54,8 @@ public class SettingsActivity extends AppCompatActivity {
     public static List<String> liste = new ArrayList<String>();
     private static String FILE_NAME;
 
-    Button btnHint;
+    Button btnExportData;
+    GastDatabase gastDB;
     TextView tvHint;
     EditText edText;
     ImageView ivLogoGrueneSchleife;
@@ -77,11 +83,28 @@ public class SettingsActivity extends AppCompatActivity {
 
         btnHueWa = findViewById(R.id.btnHueWa);
         btnPickFromFiles = findViewById(R.id.btnPickFromFiles);
-        btnHint = findViewById(R.id.btnHint);
+        btnExportData = findViewById(R.id.btnHint);
 
         btnHueWa.setOnClickListener(this::onClick);
         btnPickFromFiles.setOnClickListener(this::onClick);
-        btnHint.setOnClickListener(this::onClick);
+        btnExportData.setOnClickListener(this::onClick);
+
+        receiveDatabase();
+    }
+
+        public void receiveDatabase(){
+            RoomDatabase.Callback mainCallBack = new RoomDatabase.Callback() {
+                @Override
+                public void onCreate(@NonNull SupportSQLiteDatabase db) {
+                    super.onCreate(db);
+                }
+
+                @Override
+                public void onDestructiveMigration(@NonNull SupportSQLiteDatabase db) {
+                    super.onDestructiveMigration(db);
+                }
+            };
+        gastDB = Room.databaseBuilder(getApplicationContext(), GastDatabase.class, "AstDB").addCallback(mainCallBack).build();
     }
 
     public void onClick(View view) {
@@ -107,9 +130,10 @@ public class SettingsActivity extends AppCompatActivity {
             Toast.makeText(SettingsActivity.this, externalStorage, Toast.LENGTH_LONG);
             mGetContent.launch("*/*");
         }
-        else if (view == btnHint){
-            tvHint.setText("Erster Buchstabe: " + companyName.substring(0, 1));
-            tvHint.setVisibility(View.VISIBLE);
+        else if (view == btnExportData){
+            //tvHint.setText("Erster Buchstabe: " + companyName.substring(0, 1));
+            //tvHint.setVisibility(View.VISIBLE);
+            getAllGuestInBackground(this);
         }
     }
     ActivityResultLauncher<String> mGetContent = registerForActivityResult(new ActivityResultContracts.GetContent(),
@@ -193,6 +217,27 @@ public class SettingsActivity extends AppCompatActivity {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void getAllGuestInBackground(Context context){
+        ExecutorService executorService = Executors.newFixedThreadPool(1);//newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                // background task
+                GastDAO gastDAO = gastDB.getGastDao();
+                List<Gast>  gaeste = gastDAO.getAllGast();
+                Log.e(TAG, gaeste.toString());
+                // on finishing task
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(SettingsActivity.this, "Check your Log", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        });
     }
 
     public void loadLevel(){

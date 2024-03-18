@@ -32,7 +32,10 @@
                     android:backgroundTint="@color/gruene_schleife"
                     android:text="@string/text_button_huewa"
                     android:textSize="24sp"
-                    android:textStyle="bold" />
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:drawableRight="@drawable/logo_huette_button_size"
+                    />
             </LinearLayout>
 
             <LinearLayout
