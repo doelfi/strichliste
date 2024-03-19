@@ -17,6 +17,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
@@ -134,7 +135,7 @@ public class GetraenkeActivity extends AppCompatActivity {
 
     private void createButtons(List<String> liste) {
         int i = 0;
-        TableLayout.LayoutParams layoutParams = new TableLayout.LayoutParams(-2, 150);
+        TableLayout.LayoutParams layoutParams = new TableLayout.LayoutParams(-1, 150);
         TableLayout.LayoutParams layoutParams2 = new TableLayout.LayoutParams(0, 10);
         int column = 1;
         LinearLayout layout;
@@ -150,9 +151,9 @@ public class GetraenkeActivity extends AppCompatActivity {
             newBtn = new Button(this);
             newBtn.setText(liste.get(i));
             newBtn.setLayoutParams(layoutParams);
-            newBtn.setBackgroundColor(getColor(R.color.gruene_schleife));
+            newBtn.setBackground(AppCompatResources.getDrawable(this, R.drawable.custom_button));
             newBtn.setTextColor(getColor(R.color.white));
-            newBtn.setTextSize(20);
+            newBtn.setTextSize(18);
             String getraenkeName = newBtn.getText().toString();
             newBtn.setOnClickListener(new View.OnClickListener() {
                 @Override

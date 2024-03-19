@@ -11,6 +11,7 @@ import android.widget.TableLayout;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
@@ -81,11 +82,11 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 layout = findViewById(R.id.column3);
             }
-            // @ToDo: change button syle via style="@android:style/Widget.Button.Inset"
+            // @ToDo: change button syle via style="@android:style/Widget.Material3.Button"
             newBtn = new Button(this);
             newBtn.setText(liste.get(i));
+            newBtn.setBackground(AppCompatResources.getDrawable(this, R.drawable.custom_button));
             newBtn.setLayoutParams(layoutParams);
-            newBtn.setBackgroundColor(getColor(R.color.gruene_schleife));
             newBtn.setTextColor(getColor(R.color.white));
             newBtn.setTextSize(20);
             String gastName = newBtn.getText().toString();

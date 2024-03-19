@@ -3,4 +3,5 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="gruene_schleife">#3C5A31</color>
+    <color name="gs_hellgruen">#31C440</color>
 </resources>
