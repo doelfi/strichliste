@@ -22,23 +22,24 @@
         android:layout_marginLeft="300dp"
         android:layout_marginRight="300dp"
         android:backgroundTint="@color/gruene_schleife"
-        android:text="@string/text_button_huewa"
+        android:text="@string/text_button_home"
         android:textSize="24sp"
         android:textStyle="bold" />
 
     <Button
         android:id="@+id/btnPickFromFiles"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="105dp"
         android:layout_marginLeft="300dp"
         android:layout_marginRight="300dp"
-        android:text="@string/text_button_Pick_From_Files" />
+        android:text="@string/text_button_Pick_From_Files"
+        android:textSize="24sp"/>
 
     <Button
         android:id="@+id/btnHint"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/text_button_hint" />
+        android:text="@string/text_button_export_data" />
 
     <TextView
         android:id="@+id/tvHint"

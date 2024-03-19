@@ -8,63 +8,67 @@
     android:orientation="vertical"
     tools:context=".MainActivity"
     android:stretchColumns="0,1,2">
-
-    <TableLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:stretchColumns="0,1,2">
+        android:layout_height="match_parent">
 
-        <TableRow
-            android:id="@+id/row1">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:id = "@+id/column1">
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:stretchColumns="0,1,2">
 
-                <Button
-                    android:id="@+id/btnHueWa"
+            <TableRow
+                android:id="@+id/row1">
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="105dp"
-                    android:backgroundTint="@color/gruene_schleife"
-                    android:text="@string/text_button_huewa"
-                    android:textSize="24sp"
-                    android:textColor="@color/white"
-                    android:textStyle="bold"
-                    android:drawableRight="@drawable/logo_huette_button_size"
-                    />
-            </LinearLayout>
+                    android:layout_height="match_parent"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:id = "@+id/column1">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:id = "@+id/column2">
-            </LinearLayout>
+                    <Button
+                        android:id="@+id/btnHueWa"
+                        android:layout_width="match_parent"
+                        android:layout_height="105dp"
+                        android:backgroundTint="@color/gruene_schleife"
+                        android:text="@string/text_button_huewa"
+                        android:textSize="24sp"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        android:drawableRight="@drawable/logo_huette_button_size"
+                        />
+                </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:id = "@+id/column3">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:id = "@+id/column2">
+                </LinearLayout>
 
-                <ImageView
-                    android:id="@+id/ivLogoGrueneSchleife"
-                    android:layout_width="198dp"
-                    android:layout_height="182dp"
-                    tools:srcCompat="@drawable/logo_gruene_schleife" />
-            </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:id = "@+id/column3">
 
-        </TableRow>
-    </TableLayout>
+                    <ImageView
+                        android:id="@+id/ivLogoGrueneSchleife"
+                        android:layout_width="198dp"
+                        android:layout_height="182dp"
+                        tools:srcCompat="@drawable/logo_gruene_schleife" />
+                </LinearLayout>
+
+            </TableRow>
+        </TableLayout>
+    </ScrollView>
 
 </LinearLayout>

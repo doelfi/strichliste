@@ -69,8 +69,8 @@ public class MainActivity extends AppCompatActivity {
     }
     private void createButtons(List<String> liste) {
         int i = 0;
-        TableLayout.LayoutParams layoutParams = new TableLayout.LayoutParams(-2, 150);
-        TableLayout.LayoutParams layoutParams2 = new TableLayout.LayoutParams(0, 10);
+        TableLayout.LayoutParams layoutParams = new TableLayout.LayoutParams(-2, 200);
+        TableLayout.LayoutParams layoutParams2 = new TableLayout.LayoutParams(0, 20);
         int column = 1;
         LinearLayout layout;
         // @ToDo: hardcoded, dass 0. Zeile nicht inkludiert ist

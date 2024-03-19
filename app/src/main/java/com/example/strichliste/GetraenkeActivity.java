@@ -135,8 +135,8 @@ public class GetraenkeActivity extends AppCompatActivity {
 
     private void createButtons(List<String> liste) {
         int i = 0;
-        TableLayout.LayoutParams layoutParams = new TableLayout.LayoutParams(-1, 150);
-        TableLayout.LayoutParams layoutParams2 = new TableLayout.LayoutParams(0, 10);
+        TableLayout.LayoutParams layoutParams = new TableLayout.LayoutParams(-1, 200);
+        TableLayout.LayoutParams layoutParams2 = new TableLayout.LayoutParams(0, 20);
         int column = 1;
         LinearLayout layout;
         // @ToDo: hardcoded, dass Einnahmen Verkaufspreise nicht mit drin sind
@@ -153,7 +153,7 @@ public class GetraenkeActivity extends AppCompatActivity {
             newBtn.setLayoutParams(layoutParams);
             newBtn.setBackground(AppCompatResources.getDrawable(this, R.drawable.custom_button));
             newBtn.setTextColor(getColor(R.color.white));
-            newBtn.setTextSize(18);
+            newBtn.setTextSize(20);
             String getraenkeName = newBtn.getText().toString();
             newBtn.setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -18,6 +18,9 @@
         android:theme="@style/Theme.Strichliste"
         tools:targetApi="31">
         <activity
+            android:name=".ExportDataActivity"
+            android:exported="false" />
+        <activity
             android:name=".SettingsActivity"
             android:exported="false" />
         <activity

@@ -90,6 +90,8 @@ public class SettingsActivity extends AppCompatActivity {
         btnExportData.setOnClickListener(this::onClick);
 
         receiveDatabase();
+        int imageID = getResources().getIdentifier("logo_gruene_schleife", "drawable", getPackageName());
+        ivLogoGrueneSchleife.setImageResource(imageID);
     }
 
         public void receiveDatabase(){
@@ -125,15 +127,15 @@ public class SettingsActivity extends AppCompatActivity {
             //Toast.makeText(getApplicationContext(), "Lösung: " + companyName, Toast.LENGTH_LONG).show();
             //String newName;
             //newName = edText.getText().toString();
-            String externalStorage = Environment.getExternalStorageState();
 
-            Toast.makeText(SettingsActivity.this, externalStorage, Toast.LENGTH_LONG);
             mGetContent.launch("*/*");
         }
         else if (view == btnExportData){
             //tvHint.setText("Erster Buchstabe: " + companyName.substring(0, 1));
             //tvHint.setVisibility(View.VISIBLE);
-            getAllGuestInBackground(this);
+            // getAllGuestInBackground(this);
+            Intent intent = new Intent(this, ExportDataActivity.class);
+            startActivity(intent);
         }
     }
     ActivityResultLauncher<String> mGetContent = registerForActivityResult(new ActivityResultContracts.GetContent(),
@@ -142,13 +144,13 @@ public class SettingsActivity extends AppCompatActivity {
                 public void onActivityResult(Uri uri) {
                     // Handle the returned Uri
                     File file;
-                    String path = uri.getPath(); // raw:/storage/emulated/0/Download/getraenkeUndGaeste.xlsx need file:/ ...
+                    String path = uri.getPath();
                     Log.e(TAG, path);
-
                     // @ToDo: hardcoded!!! always else branch ???
-                    if (path.contains("raw")) {
-                        path = path.replace("raw:/storage/emulated/0/", "");
-                        file = new File(Environment.getExternalStorageDirectory(), path);
+                    if (path.contains("Cannstatter")) {
+                        Log.e(TAG, "I'm in if");
+                        path = path.substring(path.lastIndexOf("/"));
+                        file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS + path).toURI());
                     } else {
                         FILE_NAME = "/KopieCannstatterHütteDatenbank.xlsm";
                         file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS + FILE_NAME).toURI());
@@ -158,7 +160,7 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             });
     public void createGaesteListInBackground(File file){
-        ExecutorService executorService = Executors.newSingleThreadExecutor(); //newFixedThreadPool(1);//
+        ExecutorService executorService = Executors.newSingleThreadExecutor(); //
         Handler handler = new Handler(Looper.getMainLooper());
         liste = new ArrayList<String>();
         executorService.execute(new Runnable() {

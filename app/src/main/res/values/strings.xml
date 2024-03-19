@@ -1,12 +1,15 @@
 <resources>
     <string name="app_name">strichliste</string>
-    <string name="text_button_huewa">"HüWa"</string>
+    <string name="text_button_huewa">"Einstellungen"</string>
     <string name="text_button_settings">"Settings"</string>
     <string name="text_button_hint">"Hint"</string>
+    <string name="text_button_export_data">"Daten exportieren"</string>
+
+    <string name="text_button_home">"Startseite"</string>
 
     <string name="text_button_newGast">"NewGast"</string>
     <string name="text_button_excelActivity">"ExcelActivity"</string>
 
     <string name="text_button_Useless">"Useless"</string>
-    <string name="text_button_Pick_From_Files">"Pick From Files"</string>
+    <string name="text_button_Pick_From_Files">"Gästeliste hochladen"</string>
 </resources>
