@@ -53,7 +53,7 @@ public class ExportDataActivity extends AppCompatActivity {
         gastDB = Room.databaseBuilder(getApplicationContext(), GastDatabase.class, "AstDB").addCallback(mainCallBack).build();
         gaesteListe = ((MyGlobalVariables) ExportDataActivity.this.getApplication()).getGaesteListe();
     }
-    public void addGastInBackground(Gast gast){
+    public void extractGastDataInBackground(String name){
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
         Log.e(TAG, "ok ");
@@ -61,12 +61,12 @@ public class ExportDataActivity extends AppCompatActivity {
             @Override
             public void run() {
                 // background task
-                gastDB.getGastDao().addGast(gast);
+                gastDB.getGastDao().getSummeGastGetraenkZeitpunkt(name, );
                 // on finishing task
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        Log.e(TAG, "Bestellung hinzugefügt " + gast.name);
+                        Log.e(TAG, "Daten für Gast " + name + "sortiert");
                     }
                 });
             }

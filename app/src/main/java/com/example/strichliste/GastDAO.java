@@ -24,6 +24,6 @@ public interface GastDAO {
     public Gast getGast(String name);
     @Query("select * from gast where name==:name AND getraenk==:getraenk")
     public Gast getGastGetraenk(String name, String getraenk);
-    @Query("select SUM(anzahl) as gesamtmenge from gast where name==:name AND getraenk==:getraenk AND zeitpunkt > :start_zeitpunkt AND zeitpunkt < :end_zeitpunkt")
+    @Query("select SUM(anzahl) as gesamtmenge from gast where name==:name AND getraenk==:getraenk AND zeitpunkt >= :start_zeitpunkt AND zeitpunkt < :end_zeitpunkt")
     public int getSummeGastGetraenkZeitpunkt(String name, String getraenk, Date start_zeitpunkt, Date end_zeitpunkt);
 }
