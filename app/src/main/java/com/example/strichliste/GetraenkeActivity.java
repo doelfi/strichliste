@@ -100,7 +100,7 @@ public class GetraenkeActivity extends AppCompatActivity {
 
     public void createGetraenkeList(Context context, String NAME) {
         File file = new File(context.getExternalFilesDir(null), NAME);
-        Log.e(TAG, "I got the file");
+        Log.e(TAG, "I got the file " + file.getPath());
         //Log.e(TAG, "External Storage state: " + Environment.getExternalStorageState());
 
         try {
@@ -119,13 +119,14 @@ public class GetraenkeActivity extends AppCompatActivity {
                 while (cellIterator.hasNext()) {
                     Cell cell = cellIterator.next();
                     String cellValue = dataFormatter.formatCellValue(cell);
-                    //System.out.println(cellValue+"\t");
                     liste.add(cellValue);
                     break;
                 }
             }
             Log.e(TAG, "fertige Liste: " + liste);
             workbook.close();
+            ((MyGlobalVariables) this.getApplication()).setGetraenkeListe((ArrayList<String>) liste);
+            Log.e(TAG, "getraenke Liste " + ((MyGlobalVariables) this.getApplication()).getGetraenkeListe());
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {

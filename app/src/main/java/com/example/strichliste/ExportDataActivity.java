@@ -23,8 +23,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -33,6 +35,7 @@ public class ExportDataActivity extends AppCompatActivity {
     String TAG = "ExportDataActivity";
     ArrayList<String> gaesteListe;
     ArrayList<String> liste;
+    private static final String NAME = "/KopieGetraenkeUndGaeste.xlsx";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +55,8 @@ public class ExportDataActivity extends AppCompatActivity {
 
         gastDB = Room.databaseBuilder(getApplicationContext(), GastDatabase.class, "AstDB").addCallback(mainCallBack).build();
         gaesteListe = ((MyGlobalVariables) ExportDataActivity.this.getApplication()).getGaesteListe();
+
+        extractGastDataInBackground("Lisa");
     }
     public void extractGastDataInBackground(String name){
         ExecutorService executorService = Executors.newSingleThreadExecutor();
@@ -61,44 +66,69 @@ public class ExportDataActivity extends AppCompatActivity {
             @Override
             public void run() {
                 // background task
-                gastDB.getGastDao().getSummeGastGetraenkZeitpunkt(name, );
+                writeToGastGetraenkeList(ExportDataActivity.this, NAME);
+                // gastDB.getGastDao().getSummeGastGetraenkZeitpunkt(name, "bla", new Date(), new Date());
                 // on finishing task
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        Log.e(TAG, "Daten für Gast " + name + "sortiert");
+                        Log.e(TAG, "Done");
                     }
                 });
             }
         });
     }
 
-    public void createGetraenkeList(Context context, String NAME) {
+
+    public void writeToGastGetraenkeList(Context context, String NAME) {
         File file = new File(context.getExternalFilesDir(null), NAME);
-        Log.e(TAG, "I got the file");
+        Log.e(TAG, "I got the file " + file.getPath());
         //Log.e(TAG, "External Storage state: " + Environment.getExternalStorageState());
 
         try {
             liste = new ArrayList<String>();
             FileInputStream fileInputStream = new FileInputStream(file);
-            Log.e(TAG, "Reading from Excel" + fileInputStream);
+            Log.e(TAG, "Reading from Excel " + fileInputStream);
             Workbook workbook = new XSSFWorkbook(fileInputStream);
             DataFormatter dataFormatter = new DataFormatter();
+            workbook.setMissingCellPolicy(Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
 
             Sheet sh = workbook.getSheetAt(0);
+            int firstRowNumber =  sh.getFirstRowNum();
+            int lastRowNumber = sh.getLastRowNum();
+            int lastColumn = sh.getRow(0).getLastCellNum();
+            Log.e(TAG, "Last Column: " + lastColumn);
 
-            Iterator<Row> iterator = sh.iterator();
-            while (iterator.hasNext()) {
-                Row row = iterator.next();
-                Iterator<Cell> cellIterator = row.iterator();
-                while (cellIterator.hasNext()) {
-                    Cell cell = cellIterator.next();
-                    String cellValue = dataFormatter.formatCellValue(cell);
-                    //System.out.println(cellValue+"\t");
-                    liste.add(cellValue);
-                    break;
+            for (int rowNum = firstRowNumber; rowNum <= lastRowNumber; rowNum++) {
+                Row row = sh.getRow(rowNum);
+                if (row == null) {
+                    // This whole row is empty
+                    // Handle it as needed
+                    continue;
+                }
+                else {
+
+                    Cell cell = row.getCell(0);
+                    String getraenkName = dataFormatter.formatCellValue(cell);
+                    Log.e(TAG, "Getränke Name: " + getraenkName);
+                    for (int cn = 0; cn < lastColumn; cn++) {
+                        Cell c = row.getCell(cn, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+                        if (c == null) {
+                            // The spreadsheet is empty in this cell
+
+                        } else {
+                            // Do something useful with the cell's contents
+                            try {
+                                long day = dateToMilliseconds(dataFormatter.formatCellValue(sh.getRow(0).getCell(cn)));
+                                Log.e(TAG, "Day in ms: " + day);
+                            } catch (IndexOutOfBoundsException e) {
+                                continue;
+                            }
+                        }
+                    }
                 }
             }
+
             Log.e(TAG, "fertige Liste: " + liste);
             workbook.close();
         } catch (FileNotFoundException e) {
@@ -106,5 +136,21 @@ public class ExportDataActivity extends AppCompatActivity {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public long dateToMilliseconds(String startDate) {
+        // date = 19/10/23
+        long millis = 0;
+        String[] dateList = startDate.split("/");
+        startDate = "20" + dateList[2] + "/" + dateList[1] + "/" + dateList[0];
+        String myDate = startDate + " 00:00:00";
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        try {
+            Date date = sdf.parse(myDate);
+            millis = date.getTime();
+        } catch (ParseException pe) {
+            pe.printStackTrace();
+        }
+        return millis;
     }
 }
