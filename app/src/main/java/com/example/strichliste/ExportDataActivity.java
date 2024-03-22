@@ -2,6 +2,7 @@ package com.example.strichliste;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -22,6 +23,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -66,7 +68,8 @@ public class ExportDataActivity extends AppCompatActivity {
             @Override
             public void run() {
                 // background task
-                writeToGastGetraenkeList(ExportDataActivity.this, NAME);
+                String gastName = "Woody Allen";
+                writeToGastGetraenkeList(ExportDataActivity.this, NAME, gastName);
                 // gastDB.getGastDao().getSummeGastGetraenkZeitpunkt(name, "bla", new Date(), new Date());
                 // on finishing task
                 handler.post(new Runnable() {
@@ -80,8 +83,9 @@ public class ExportDataActivity extends AppCompatActivity {
     }
 
 
-    public void writeToGastGetraenkeList(Context context, String NAME) {
-        File file = new File(context.getExternalFilesDir(null), NAME);
+    public void writeToGastGetraenkeList(Context context, String NAME, String gastName) {
+        //File file = new File(context.getExternalFilesDir(null), NAME);
+        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS + NAME).toURI());
         Log.e(TAG, "I got the file " + file.getPath());
         //Log.e(TAG, "External Storage state: " + Environment.getExternalStorageState());
 
@@ -99,7 +103,7 @@ public class ExportDataActivity extends AppCompatActivity {
             int lastColumn = sh.getRow(0).getLastCellNum();
             Log.e(TAG, "Last Column: " + lastColumn);
 
-            for (int rowNum = firstRowNumber; rowNum <= lastRowNumber; rowNum++) {
+            for (int rowNum = firstRowNumber+1; rowNum <= lastRowNumber; rowNum++) {
                 Row row = sh.getRow(rowNum);
                 if (row == null) {
                     // This whole row is empty
@@ -107,30 +111,40 @@ public class ExportDataActivity extends AppCompatActivity {
                     continue;
                 }
                 else {
-
                     Cell cell = row.getCell(0);
                     String getraenkName = dataFormatter.formatCellValue(cell);
-                    Log.e(TAG, "Getränke Name: " + getraenkName);
+                    //Log.e(TAG, "Getränke Name: " + getraenkName);
                     for (int cn = 0; cn < lastColumn; cn++) {
-                        Cell c = row.getCell(cn, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
-                        if (c == null) {
+                        Cell c = row.getCell(cn, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+                        if (true) {
                             // The spreadsheet is empty in this cell
-
-                        } else {
-                            // Do something useful with the cell's contents
+                            int anzahl;
                             try {
                                 long day = dateToMilliseconds(dataFormatter.formatCellValue(sh.getRow(0).getCell(cn)));
-                                Log.e(TAG, "Day in ms: " + day);
+                                try {
+                                    anzahl = gastDB.getGastDao().getSummeGastGetraenkZeitpunkt(gastName, getraenkName, day, day+86400000);
+                                } catch (NullPointerException e) {
+                                    anzahl = 0;
+                                }
+                                Log.e(TAG, "Day in ms: " + day + "\n Amount of Drink " +
+                                        getraenkName + ": " + anzahl);
+                                c.setCellValue(anzahl);
+
                             } catch (IndexOutOfBoundsException e) {
                                 continue;
                             }
+                        } else {
+                        // Do something useful with the cell's contents
                         }
                     }
                 }
             }
-
+            fileInputStream.close();
             Log.e(TAG, "fertige Liste: " + liste);
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            workbook.write(fileOutputStream);
             workbook.close();
+            fileOutputStream.close();
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
