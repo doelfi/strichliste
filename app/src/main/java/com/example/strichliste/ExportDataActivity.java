@@ -15,9 +15,10 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
@@ -37,7 +38,7 @@ public class ExportDataActivity extends AppCompatActivity {
     String TAG = "ExportDataActivity";
     ArrayList<String> gaesteListe;
     ArrayList<String> liste;
-    private static final String NAME = "/KopieGetraenkeUndGaeste.xlsx";
+    private static final String NAME = "/KopieBelegungCannstatterHütteEdition2_2.xlsm";//"/KopieGetraenkeUndGaeste.xlsx";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,43 +94,53 @@ public class ExportDataActivity extends AppCompatActivity {
             liste = new ArrayList<String>();
             FileInputStream fileInputStream = new FileInputStream(file);
             Log.e(TAG, "Reading from Excel " + fileInputStream);
-            Workbook workbook = new XSSFWorkbook(fileInputStream);
+            XSSFWorkbook workbook=(XSSFWorkbook) WorkbookFactory.create(file,"oli");
+            //Workbook workbook = new XSSFWorkbook(fileInputStream);
+            FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
             DataFormatter dataFormatter = new DataFormatter();
             workbook.setMissingCellPolicy(Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
 
-            Sheet sh = workbook.getSheetAt(0);
+            int abrechnungGast1 = workbook.getSheetIndex("Abrechnung Gast1");
+            Sheet sh = workbook.getSheetAt(abrechnungGast1);
             int firstRowNumber =  sh.getFirstRowNum();
-            int lastRowNumber = sh.getLastRowNum();
+            int lastRowNumber = Math.min(sh.getLastRowNum(), 40);
             int lastColumn = sh.getRow(0).getLastCellNum();
             Log.e(TAG, "Last Column: " + lastColumn);
 
             for (int rowNum = firstRowNumber+1; rowNum <= lastRowNumber; rowNum++) {
                 Row row = sh.getRow(rowNum);
+                Log.e(TAG, "row: " + rowNum);
                 if (row == null) {
                     // This whole row is empty
                     // Handle it as needed
                     continue;
                 }
                 else {
-                    Cell cell = row.getCell(0);
-                    String getraenkName = dataFormatter.formatCellValue(cell);
-                    //Log.e(TAG, "Getränke Name: " + getraenkName);
-                    for (int cn = 0; cn < lastColumn; cn++) {
+                    Cell cell = row.getCell(9);
+                    String getraenkName;
+                    try {
+                        getraenkName = dataFormatter.formatCellValue(cell, evaluator);
+                    } catch (RuntimeException e) {
+                        getraenkName = "error drink";
+                    }
+                    Log.e(TAG, "Getränke Name: " + getraenkName);
+                    for (int cn = 9; cn < lastColumn; cn++) {
                         Cell c = row.getCell(cn, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
                         if (true) {
                             // The spreadsheet is empty in this cell
                             int anzahl;
                             try {
-                                long day = dateToMilliseconds(dataFormatter.formatCellValue(sh.getRow(0).getCell(cn)));
+                                long day = dateToMilliseconds(dataFormatter.formatCellValue(sh.getRow(0).getCell(cn), evaluator));
+                                int tag = cn + 6;
+                                long day2 = dateToMilliseconds(tag + "/3/24");
                                 try {
-                                    anzahl = gastDB.getGastDao().getSummeGastGetraenkZeitpunkt(gastName, getraenkName, day, day+86400000);
+                                    anzahl = gastDB.getGastDao().getSummeGastGetraenkZeitpunkt(gastName, getraenkName, day2, day2+86400000);
+                                    c.setCellValue(anzahl);
+                                    Log.e(TAG, "Day in ms: " + day + "\n Amount of Drink " +
+                                            getraenkName + ": " + anzahl);
                                 } catch (NullPointerException e) {
-                                    anzahl = 0;
+                                    continue;
                                 }
-                                Log.e(TAG, "Day in ms: " + day + "\n Amount of Drink " +
-                                        getraenkName + ": " + anzahl);
-                                c.setCellValue(anzahl);
-
                             } catch (IndexOutOfBoundsException e) {
                                 continue;
                             }
