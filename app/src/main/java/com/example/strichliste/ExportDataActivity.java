@@ -38,7 +38,7 @@ public class ExportDataActivity extends AppCompatActivity {
     String TAG = "ExportDataActivity";
     ArrayList<String> gaesteListe;
     ArrayList<String> liste;
-    private static final String NAME = "/KopieBelegungCannstatterHütteEdition2_2.xlsm";//"/KopieGetraenkeUndGaeste.xlsx";
+    private static final String NAME = "/Belegung Cannstatter Hütte Edition 2.4.xlsm";//"/KopieGetraenkeUndGaeste.xlsx";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,13 +103,12 @@ public class ExportDataActivity extends AppCompatActivity {
             int abrechnungGast1 = workbook.getSheetIndex("Abrechnung Gast1");
             Sheet sh = workbook.getSheetAt(abrechnungGast1);
             int firstRowNumber =  sh.getFirstRowNum();
-            int lastRowNumber = Math.min(sh.getLastRowNum(), 40);
+            int lastRowNumber = sh.getLastRowNum();
             int lastColumn = sh.getRow(0).getLastCellNum();
             Log.e(TAG, "Last Column: " + lastColumn);
 
             for (int rowNum = firstRowNumber+1; rowNum <= lastRowNumber; rowNum++) {
                 Row row = sh.getRow(rowNum);
-                Log.e(TAG, "row: " + rowNum);
                 if (row == null) {
                     // This whole row is empty
                     // Handle it as needed
@@ -120,8 +119,11 @@ public class ExportDataActivity extends AppCompatActivity {
                     String getraenkName;
                     try {
                         getraenkName = dataFormatter.formatCellValue(cell, evaluator);
+                        if (rowNum >= 32 && getraenkName == "") {
+                            break;
+                        }
                     } catch (RuntimeException e) {
-                        getraenkName = "error drink";
+                        getraenkName = dataFormatter.formatCellValue(cell);
                     }
                     Log.e(TAG, "Getränke Name: " + getraenkName);
                     for (int cn = 9; cn < lastColumn; cn++) {
@@ -131,13 +133,15 @@ public class ExportDataActivity extends AppCompatActivity {
                             int anzahl;
                             try {
                                 long day = dateToMilliseconds(dataFormatter.formatCellValue(sh.getRow(0).getCell(cn), evaluator));
-                                int tag = cn + 6;
-                                long day2 = dateToMilliseconds(tag + "/3/24");
+                                int tag = cn + 2;
+                                long day2 = dateToMilliseconds(tag + "/03/24");
                                 try {
                                     anzahl = gastDB.getGastDao().getSummeGastGetraenkZeitpunkt(gastName, getraenkName, day2, day2+86400000);
-                                    c.setCellValue(anzahl);
-                                    Log.e(TAG, "Day in ms: " + day + "\n Amount of Drink " +
+                                    if (anzahl != 0) {
+                                        c.setCellValue(anzahl);
+                                        Log.e(TAG, "Day in ms: " + tag + "\n Amount of Drink " +
                                             getraenkName + ": " + anzahl);
+                                    }
                                 } catch (NullPointerException e) {
                                     continue;
                                 }
@@ -151,8 +155,9 @@ public class ExportDataActivity extends AppCompatActivity {
                 }
             }
             fileInputStream.close();
+
             Log.e(TAG, "fertige Liste: " + liste);
-            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            FileOutputStream fileOutputStream = new FileOutputStream("/storage/emulated/0/Download/Getraenke.xlsm");
             workbook.write(fileOutputStream);
             workbook.close();
             fileOutputStream.close();
