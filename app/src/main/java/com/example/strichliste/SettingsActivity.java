@@ -148,7 +148,7 @@ public class SettingsActivity extends AppCompatActivity {
                     Log.e(TAG, path);
                     // @ToDo: hardcoded!!! always else branch ???
                     if (path.contains("Cannstatter")) {
-                        Log.e(TAG, "I'm in if");
+                        Log.e(TAG, "path");
                         path = path.substring(path.lastIndexOf("/"));
                         file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS + path).toURI());
                     } else {
@@ -167,7 +167,7 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void run() {
                 // background task
-                createGetraenkeList(file);
+                createGaesteList(file);
 
                 // on finishing task
                 handler.post(new Runnable() {
@@ -179,7 +179,7 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
     }
-    public void createGetraenkeList(File file) {
+    public void createGaesteList(File file) {
         Log.e(TAG, "I got the file");
 
         try {
@@ -188,7 +188,9 @@ public class SettingsActivity extends AppCompatActivity {
             Workbook workbook = new XSSFWorkbook(fileInputStream);
             DataFormatter dataFormatter = new DataFormatter();
             // Get Datenbank sheet
-            Sheet sh = workbook.getSheetAt(3);
+            // Sheet sh = workbook.getSheetAt(3);
+            int huettenabrechnungUebersichtIndex = workbook.getSheetIndex("Hüttenabrechnung Übersicht");
+            Sheet sh = workbook.getSheetAt(huettenabrechnungUebersichtIndex);
             Log.e(TAG, "Sheet name: " + sh.getSheetName());
 
             Iterator<Row> iterator = sh.iterator();
