@@ -73,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
         TableLayout.LayoutParams layoutParams2 = new TableLayout.LayoutParams(0, 20);
         int column = 1;
         LinearLayout layout;
-        // @ToDo: hardcoded, dass 0. Zeile nicht inkludiert ist
         for (i=0; i < liste.size(); i++) {
             if (column == 1) {
                 layout = findViewById(R.id.column1);
