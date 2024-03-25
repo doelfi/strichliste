@@ -69,14 +69,13 @@ public class ExportDataActivity extends AppCompatActivity {
             @Override
             public void run() {
                 // background task
-                String gastName = "Woody Allen";
-                writeToGastGetraenkeList(ExportDataActivity.this, NAME, gastName);
+                writeToGastGetraenkeList(ExportDataActivity.this, NAME);
                 // gastDB.getGastDao().getSummeGastGetraenkZeitpunkt(name, "bla", new Date(), new Date());
                 // on finishing task
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        Log.e(TAG, "Done");
+                        Log.e(TAG, "Done with exporting Data");
                     }
                 });
             }
@@ -84,7 +83,7 @@ public class ExportDataActivity extends AppCompatActivity {
     }
 
 
-    public void writeToGastGetraenkeList(Context context, String NAME, String gastName) {
+    public void writeToGastGetraenkeList(Context context, String NAME) {
         //File file = new File(context.getExternalFilesDir(null), NAME);
         File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS + NAME).toURI());
         Log.e(TAG, "I got the file " + file.getPath());
@@ -99,48 +98,48 @@ public class ExportDataActivity extends AppCompatActivity {
             FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
             DataFormatter dataFormatter = new DataFormatter();
             workbook.setMissingCellPolicy(Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+            gaesteListe = ((MyGlobalVariables) this.getApplication()).getGaesteListe();
+            String gastName;
 
-            int abrechnungGast1 = workbook.getSheetIndex("Abrechnung Gast1");
-            Sheet sh = workbook.getSheetAt(abrechnungGast1);
-            int firstRowNumber =  sh.getFirstRowNum();
-            int lastRowNumber = sh.getLastRowNum();
-            int lastColumn = sh.getRow(0).getLastCellNum();
-            Log.e(TAG, "Last Column: " + lastColumn);
+            for (int nameIndex = 0; nameIndex < gaesteListe.size(); nameIndex++) {
+                gastName = gaesteListe.get(nameIndex);
 
-            for (int rowNum = firstRowNumber+1; rowNum <= lastRowNumber; rowNum++) {
-                Row row = sh.getRow(rowNum);
-                if (row == null) {
-                    // This whole row is empty
-                    // Handle it as needed
-                    continue;
-                }
-                else {
-                    Cell cell = row.getCell(9);
-                    String getraenkName;
-                    try {
-                        getraenkName = dataFormatter.formatCellValue(cell, evaluator);
-                        if (rowNum >= 32 && getraenkName == "") {
-                            break;
+                int abrechnungIndex = nameIndex+1;
+                int abrechnungGast_ = workbook.getSheetIndex("Abrechnung Gast" + abrechnungIndex);
+                Sheet sh = workbook.getSheetAt(abrechnungGast_);
+                int firstRowNumber = sh.getFirstRowNum();
+                int lastRowNumber = sh.getLastRowNum();
+                int lastColumn = sh.getRow(0).getLastCellNum();
+
+                for (int rowNum = firstRowNumber + 1; rowNum <= lastRowNumber; rowNum++) {
+                    Row row = sh.getRow(rowNum);
+                    if (row == null) {
+                        // This whole row is empty
+                        // Handle it as needed
+                        continue;
+                    } else {
+                        Cell cell = row.getCell(9);
+                        String getraenkName;
+                        try {
+                            getraenkName = dataFormatter.formatCellValue(cell, evaluator);
+                            if (rowNum >= 32 && getraenkName == "") {
+                                break;
+                            }
+                        } catch (RuntimeException e) {
+                            getraenkName = dataFormatter.formatCellValue(cell);
                         }
-                    } catch (RuntimeException e) {
-                        getraenkName = dataFormatter.formatCellValue(cell);
-                    }
-                    Log.e(TAG, "Getränke Name: " + getraenkName);
-                    for (int cn = 9; cn < lastColumn; cn++) {
-                        Cell c = row.getCell(cn, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
-                        if (true) {
-                            // The spreadsheet is empty in this cell
+                        // Log.e(TAG, "Getränke Name: " + getraenkName);
+                        for (int cn = 9; cn < lastColumn; cn++) {
+                            Cell c = row.getCell(cn, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
                             int anzahl;
                             try {
                                 long day = dateToMilliseconds(dataFormatter.formatCellValue(sh.getRow(0).getCell(cn), evaluator));
-                                int tag = cn + 2;
-                                long day2 = dateToMilliseconds(tag + "/03/24");
+                                long day2 = dateToMilliseconds("25/03/24");
                                 try {
-                                    anzahl = gastDB.getGastDao().getSummeGastGetraenkZeitpunkt(gastName, getraenkName, day2, day2+86400000);
+                                    anzahl = gastDB.getGastDao().getSummeGastGetraenkZeitpunkt(gastName, getraenkName, day2, day2 + 86400000);
                                     if (anzahl != 0) {
                                         c.setCellValue(anzahl);
-                                        Log.e(TAG, "Day in ms: " + tag + "\n Amount of Drink " +
-                                            getraenkName + ": " + anzahl);
+                                        //Log.e(TAG, "Day in ms: " + day + "\n Amount of Drink " + getraenkName + ": " + anzahl);
                                     }
                                 } catch (NullPointerException e) {
                                     continue;
@@ -148,15 +147,13 @@ public class ExportDataActivity extends AppCompatActivity {
                             } catch (IndexOutOfBoundsException e) {
                                 continue;
                             }
-                        } else {
-                        // Do something useful with the cell's contents
                         }
                     }
                 }
+                Log.e(TAG, "Daten exportiert für " + gastName);
             }
             fileInputStream.close();
 
-            Log.e(TAG, "fertige Liste: " + liste);
             FileOutputStream fileOutputStream = new FileOutputStream("/storage/emulated/0/Download/Getraenke.xlsm");
             workbook.write(fileOutputStream);
             workbook.close();
