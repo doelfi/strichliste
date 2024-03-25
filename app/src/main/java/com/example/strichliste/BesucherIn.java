@@ -11,4 +11,9 @@ public class BesucherIn {
     public int gid;
     @ColumnInfo(name = "name")
     public String name;
+
+    public BesucherIn(int gid, String name) {
+        this.gid = gid;
+        this.name = name;
+    }
 }

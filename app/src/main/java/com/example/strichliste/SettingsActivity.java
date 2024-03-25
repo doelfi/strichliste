@@ -1,10 +1,7 @@
 package com.example.strichliste;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -33,6 +30,7 @@ import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
@@ -48,27 +46,15 @@ public class SettingsActivity extends AppCompatActivity {
 
     Button btnHueWa;
     Button btnPickFromFiles;
-
     String TAG = "SettingsActivity";
-
     public static List<String> liste = new ArrayList<String>();
-    private static String FILE_NAME;
-
     Button btnExportData;
-    GastDatabase gastDB;
+    BesucherInDatabase besucherInDB;
     TextView tvHint;
     EditText edText;
     ImageView ivLogoGrueneSchleife;
 
-    int currentLevel;
-    String companyName;
-    String imageName;
-
-    final int maxLevel = 4;
     final String prefNameFirstStart = "firstAppStart";
-    final String databaseName = "level.db";
-    final String databaseTableName = "level";
-    final String prefLevel = "currentLevel";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,7 +92,7 @@ public class SettingsActivity extends AppCompatActivity {
                     super.onDestructiveMigration(db);
                 }
             };
-        gastDB = Room.databaseBuilder(getApplicationContext(), GastDatabase.class, "AstDB").addCallback(mainCallBack).build();
+        besucherInDB = Room.databaseBuilder(getApplicationContext(), BesucherInDatabase.class, "BesucherInDB").addCallback(mainCallBack).build();
     }
 
     public void onClick(View view) {
@@ -162,6 +148,8 @@ public class SettingsActivity extends AppCompatActivity {
                 // background task
                 createGaesteList(file);
 
+                createGetraenkeList(file);
+
                 // on finishing task
                 handler.post(new Runnable() {
                     @Override
@@ -205,6 +193,10 @@ public class SettingsActivity extends AppCompatActivity {
                         if (gast.length() >= 2){
                             liste.add(gast);
                             Log.e(TAG, "Gast Name: " + gast);
+                            BesucherIn besucherIn = new BesucherIn(rowNum-1, gast);
+
+                            besucherInDB.getBesucherInDAO().addBesucherIn(besucherIn);
+
                         }
                     }
                 }
@@ -221,53 +213,66 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
-    public void getAllGuestInBackground(Context context){
-        ExecutorService executorService = Executors.newFixedThreadPool(1);//newSingleThreadExecutor();
-        Handler handler = new Handler(Looper.getMainLooper());
-        executorService.execute(new Runnable() {
-            @Override
-            public void run() {
-                // background task
-                GastDAO gastDAO = gastDB.getGastDao();
-                List<Gast>  gaeste = gastDAO.getAllGast();
-                Log.e(TAG, gaeste.toString());
-                // on finishing task
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(SettingsActivity.this, "Check your Log", Toast.LENGTH_LONG).show();
+    public void createGetraenkeList(File file) {
+        //Log.e(TAG, "External Storage state: " + Environment.getExternalStorageState());
+        // File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS + NAME).toURI());
+        Log.e(TAG, "I got the file " + file.getPath());
+        //Log.e(TAG, "External Storage state: " + Environment.getExternalStorageState());
+
+        try {
+            liste = new ArrayList<String>();
+            FileInputStream fileInputStream = new FileInputStream(file);
+            Log.e(TAG, "Reading from Excel " + fileInputStream);
+            XSSFWorkbook workbook=(XSSFWorkbook) WorkbookFactory.create(file,"oli");
+            //Workbook workbook = new XSSFWorkbook(fileInputStream);
+            FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
+            DataFormatter dataFormatter = new DataFormatter();
+            workbook.setMissingCellPolicy(Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+
+            int abrechnungGast1 = workbook.getSheetIndex("Abrechnung Gast1");
+            Sheet sh = workbook.getSheetAt(abrechnungGast1);
+            int firstRowNumber =  sh.getFirstRowNum();
+            int lastRowNumber = sh.getLastRowNum();
+            int lastColumn = sh.getRow(0).getLastCellNum();
+            Log.e(TAG, "Last Column: " + lastColumn);
+
+            for (int rowNum = firstRowNumber+1; rowNum <= lastRowNumber; rowNum++) {
+                Row row = sh.getRow(rowNum);
+                if (row == null) {
+                    // This whole row is empty
+                    // Handle it as needed
+                    continue;
+                }
+                else {
+                    Cell cell = row.getCell(9);
+                    String getraenkName;
+                    try {
+                        getraenkName = dataFormatter.formatCellValue(cell, evaluator);
+                        if (rowNum >= 32 && getraenkName == "") {
+                            break;
+                        }
+                        if (getraenkName.length() >= 2 && !getraenkName.startsWith("Verkaufspreise") && !getraenkName.startsWith("Knabbereien") && !getraenkName.startsWith("Vesper")) {
+                            Log.e(TAG, "Getränke Name: " + getraenkName);
+                            liste.add(getraenkName);
+                        }
+                    } catch (RuntimeException e) {
+                        getraenkName = dataFormatter.formatCellValue(cell);
                     }
-                });
+                }
             }
-        });
-    }
+            fileInputStream.close();
 
-    public void loadLevel(){
-        SharedPreferences preferenceLoad = getSharedPreferences(prefLevel, MODE_PRIVATE);
-        currentLevel = preferenceLoad.getInt(prefLevel, 1);
-        if (currentLevel <= maxLevel) {
-            SQLiteDatabase database = openOrCreateDatabase(databaseName, MODE_PRIVATE, null);
-            Cursor cursor = database.rawQuery("SELECT * FROM " + databaseTableName + " WHERE id = '" + currentLevel + "'", null);
-            cursor.moveToFirst();
-            if (cursor.getCount() == 1) {
-                companyName = cursor.getString(1);
-                imageName = cursor.getString(2);
-
-                cursor.close();
-                database.close();
-            }
+            Log.e(TAG, "fertige Liste: " + liste);
+            workbook.close();
+            ((MyGlobalVariables) this.getApplication()).setGetraenkeListe((ArrayList<String>) liste);
+            Log.e(TAG, "getraenke Liste " + ((MyGlobalVariables) this.getApplication()).getGetraenkeListe());
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-        int imageID = getResources().getIdentifier("logo_gruene_schleife", "drawable", getPackageName());
-        ivLogoGrueneSchleife.setImageResource(imageID);
     }
 
-    public void safeLevel(){
-        SharedPreferences preferencesLevel = getSharedPreferences(prefLevel, MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferencesLevel.edit();
-
-        editor.putInt(prefLevel, currentLevel);
-        editor.commit();
-    }
 
     public boolean firstAppStart(){
         SharedPreferences preferences = getSharedPreferences(prefNameFirstStart, MODE_PRIVATE);

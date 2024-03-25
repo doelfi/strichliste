@@ -2,6 +2,8 @@ package com.example.strichliste;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -16,18 +18,18 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity {
     Button btnHueWa;
     ImageView ivLogoGrueneSchleife;
     Button newBtn;
     Space newSpace;
-    ArrayList<String> gaesteListe;
-
-    // DataBase
-    GastDatabase gastDB;
+    List<String> gaesteListe;
+    String TAG = "MainActivity";
+    BesucherInDatabase besucherInDB;
 
 
     @Override
@@ -61,11 +63,27 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        gastDB = Room.databaseBuilder(getApplicationContext(), GastDatabase.class, "AstDB").addCallback(mainCallBack).build();
-        gaesteListe = ((MyGlobalVariables) MainActivity.this.getApplication()).getGaesteListe();
-        if (!gaesteListe.isEmpty()) {
-            createButtons(gaesteListe);
-        }
+        besucherInDB = Room.databaseBuilder(getApplicationContext(), BesucherInDatabase.class, "BesucherInDB").addCallback(mainCallBack).build();
+        createGaesteListInBackground();
+    }
+    public void createGaesteListInBackground(){
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                // background task
+                gaesteListe = besucherInDB.getBesucherInDAO().getAllNames();//((MyGlobalVariables) MainActivity.this.getApplication()).getGaesteListe()
+                // on finishing task
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        //Toast.makeText(MainActivity.this, "Created Liste", Toast.LENGTH_LONG).show();
+                        createButtons(gaesteListe);
+                    }
+                });
+            }
+        });
     }
     private void createButtons(List<String> liste) {
         int i = 0;
