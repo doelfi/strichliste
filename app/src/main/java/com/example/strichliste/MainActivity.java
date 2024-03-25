@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         int column = 1;
         LinearLayout layout;
         // @ToDo: hardcoded, dass 0. Zeile nicht inkludiert ist
-        for (i=1; i < liste.size()-1; i++) {
+        for (i=0; i < liste.size(); i++) {
             if (column == 1) {
                 layout = findViewById(R.id.column1);
             } else if (column == 2) {
@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
             layout.addView(newSpace);
             layout.addView(newBtn);
 
-            if (i % 10 == 0) {
+            if (i % 10 == 0 && i != 0) {
                 column ++;
             }
         }

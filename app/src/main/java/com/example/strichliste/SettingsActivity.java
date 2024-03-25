@@ -29,6 +29,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -39,7 +40,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -146,16 +146,9 @@ public class SettingsActivity extends AppCompatActivity {
                     File file;
                     String path = uri.getPath();
                     Log.e(TAG, path);
-                    // @ToDo: hardcoded!!! always else branch ???
-                    if (path.contains("Cannstatter")) {
-                        Log.e(TAG, "path");
-                        path = path.substring(path.lastIndexOf("/"));
-                        file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS + path).toURI());
-                    } else {
-                        FILE_NAME = "/KopieCannstatterHütteDatenbank.xlsm";
-                        file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS + FILE_NAME).toURI());
-                        Log.e(TAG, "real name " + (Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS + FILE_NAME).toURI()));
-                    }
+                    // @ToDo: hardcoded!!!
+                    path = path.substring(path.lastIndexOf("/"));
+                    file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS + path).toURI());
                     createGaesteListInBackground(file);
                 }
             });
@@ -186,32 +179,37 @@ public class SettingsActivity extends AppCompatActivity {
             FileInputStream fileInputStream = new FileInputStream(file);
             Log.e(TAG, "Reading from Excel" + fileInputStream);
             Workbook workbook = new XSSFWorkbook(fileInputStream);
+            workbook.setMissingCellPolicy(Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
             DataFormatter dataFormatter = new DataFormatter();
-            // Get Datenbank sheet
-            // Sheet sh = workbook.getSheetAt(3);
+            FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
+
             int huettenabrechnungUebersichtIndex = workbook.getSheetIndex("Hüttenabrechnung Übersicht");
             Sheet sh = workbook.getSheetAt(huettenabrechnungUebersichtIndex);
             Log.e(TAG, "Sheet name: " + sh.getSheetName());
 
-            Iterator<Row> iterator = sh.iterator();
-            while (iterator.hasNext()) {
-                String cellValue = ".";
-                Row row = iterator.next();
-                Iterator<Cell> cellIterator = row.iterator();
-                while (cellIterator.hasNext()) {
-                    // Call cellIterator.next() twice because I need 2nd column
-                    Cell cell = cellIterator.next();
-                    cell = cellIterator.next();
-                    cellValue = dataFormatter.formatCellValue(cell);
-                    // Log.e(TAG, "Cell value: " + cellValue);
-                    liste.add(cellValue);
-                    break;
+            int firstRowNumber =  sh.getFirstRowNum();
+            int lastRowNumber = sh.getLastRowNum();
+
+            for (int rowNum = firstRowNumber+2; rowNum <= lastRowNumber; rowNum++) {
+                Row row = sh.getRow(rowNum);
+                if (row == null) {
+                    // This whole row is empty
+                    // Handle it as needed
+                    continue;
                 }
-                if (cellValue.startsWith("CONCATENATE")){
-                    Log.e(TAG, "No (more) values in Datenbank");
-                    break;
+                else {
+                    Cell cell = row.getCell(0, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+                    String gast = dataFormatter.formatCellValue(cell, evaluator);
+                    if (gast.startsWith("Gast :")) {
+                        gast = gast.replace("Gast : ", "");
+                        if (gast.length() >= 2){
+                            liste.add(gast);
+                            Log.e(TAG, "Gast Name: " + gast);
+                        }
+                    }
                 }
             }
+            fileInputStream.close();
             Log.e(TAG, "fertige Liste: " + liste);
             ((MyGlobalVariables) this.getApplication()).setGaesteListe((ArrayList<String>) liste);
             Log.e(TAG, "globale Liste: " + ((MyGlobalVariables) this.getApplication()).getGaesteListe());
