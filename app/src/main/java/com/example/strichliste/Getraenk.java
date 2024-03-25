@@ -6,14 +6,14 @@ import androidx.room.PrimaryKey;
 
 @Entity
 public class Getraenk {
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     @ColumnInfo(name="drink_id")
     int did;
     @ColumnInfo(name = "name")
     public String name;
 
-    public Getraenk(String name) {
+    public Getraenk(String name, int did) {
         this.name = name;
-        this.did = 0;
+        this.did = did;
     }
 }

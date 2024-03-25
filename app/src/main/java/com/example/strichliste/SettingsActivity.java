@@ -50,6 +50,7 @@ public class SettingsActivity extends AppCompatActivity {
     public static List<String> liste = new ArrayList<String>();
     Button btnExportData;
     BesucherInDatabase besucherInDB;
+    GetraenkDatabase getraenkDB;
     TextView tvHint;
     EditText edText;
     ImageView ivLogoGrueneSchleife;
@@ -93,6 +94,7 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             };
         besucherInDB = Room.databaseBuilder(getApplicationContext(), BesucherInDatabase.class, "BesucherInDB").addCallback(mainCallBack).build();
+        getraenkDB = Room.databaseBuilder(getApplicationContext(), GetraenkDatabase.class, "GetraenkDB").addCallback(mainCallBack).build();
     }
 
     public void onClick(View view) {
@@ -254,6 +256,8 @@ public class SettingsActivity extends AppCompatActivity {
                         if (getraenkName.length() >= 2 && !getraenkName.startsWith("Verkaufspreise") && !getraenkName.startsWith("Knabbereien") && !getraenkName.startsWith("Vesper")) {
                             Log.e(TAG, "Getränke Name: " + getraenkName);
                             liste.add(getraenkName);
+                            Getraenk getraenk = new Getraenk(getraenkName, rowNum);
+                            getraenkDB.getGetraenkDAO().addGetraenk(getraenk);
                         }
                     } catch (RuntimeException e) {
                         getraenkName = dataFormatter.formatCellValue(cell);
