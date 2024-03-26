@@ -29,7 +29,6 @@ import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -37,8 +36,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -47,7 +44,6 @@ public class SettingsActivity extends AppCompatActivity {
     Button btnHueWa;
     Button btnPickFromFiles;
     String TAG = "SettingsActivity";
-    public static List<String> liste = new ArrayList<String>();
     Button btnExportData;
     BesucherInDatabase besucherInDB;
     GetraenkDatabase getraenkDB;
@@ -143,7 +139,6 @@ public class SettingsActivity extends AppCompatActivity {
     public void createGaesteListInBackground(File file){
         ExecutorService executorService = Executors.newSingleThreadExecutor(); //
         Handler handler = new Handler(Looper.getMainLooper());
-        liste = new ArrayList<String>();
         executorService.execute(new Runnable() {
             @Override
             public void run() {
@@ -156,26 +151,26 @@ public class SettingsActivity extends AppCompatActivity {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(SettingsActivity.this, "Created Liste", Toast.LENGTH_LONG).show();
+                        Toast.makeText(SettingsActivity.this, "Created Database", Toast.LENGTH_LONG).show();
                     }
                 });
             }
         });
     }
     public void createGaesteList(File file) {
-        Log.e(TAG, "I got the file");
+        Log.e(TAG, "I got the file " + file.getPath());
 
         try {
             FileInputStream fileInputStream = new FileInputStream(file);
             Log.e(TAG, "Reading from Excel" + fileInputStream);
-            Workbook workbook = new XSSFWorkbook(fileInputStream);
+            XSSFWorkbook workbook=(XSSFWorkbook) WorkbookFactory.create(file,"oli");
+            //Workbook workbook = new XSSFWorkbook(fileInputStream);
             workbook.setMissingCellPolicy(Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
             DataFormatter dataFormatter = new DataFormatter();
             FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
 
             int huettenabrechnungUebersichtIndex = workbook.getSheetIndex("Hüttenabrechnung Übersicht");
             Sheet sh = workbook.getSheetAt(huettenabrechnungUebersichtIndex);
-            Log.e(TAG, "Sheet name: " + sh.getSheetName());
 
             int firstRowNumber =  sh.getFirstRowNum();
             int lastRowNumber = sh.getLastRowNum();
@@ -184,7 +179,6 @@ public class SettingsActivity extends AppCompatActivity {
                 Row row = sh.getRow(rowNum);
                 if (row == null) {
                     // This whole row is empty
-                    // Handle it as needed
                     continue;
                 }
                 else {
@@ -193,20 +187,14 @@ public class SettingsActivity extends AppCompatActivity {
                     if (gast.startsWith("Gast :")) {
                         gast = gast.replace("Gast : ", "");
                         if (gast.length() >= 2){
-                            liste.add(gast);
-                            Log.e(TAG, "Gast Name: " + gast);
                             BesucherIn besucherIn = new BesucherIn(rowNum-1, gast);
-
                             besucherInDB.getBesucherInDAO().addBesucherIn(besucherIn);
-
                         }
                     }
                 }
             }
             fileInputStream.close();
-            Log.e(TAG, "fertige Liste: " + liste);
-            ((MyGlobalVariables) this.getApplication()).setGaesteListe((ArrayList<String>) liste);
-            Log.e(TAG, "globale Liste: " + ((MyGlobalVariables) this.getApplication()).getGaesteListe());
+            Log.e(TAG, "created Gäste Database");
             workbook.close();
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
@@ -219,10 +207,8 @@ public class SettingsActivity extends AppCompatActivity {
         //Log.e(TAG, "External Storage state: " + Environment.getExternalStorageState());
         // File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS + NAME).toURI());
         Log.e(TAG, "I got the file " + file.getPath());
-        //Log.e(TAG, "External Storage state: " + Environment.getExternalStorageState());
 
         try {
-            liste = new ArrayList<String>();
             FileInputStream fileInputStream = new FileInputStream(file);
             Log.e(TAG, "Reading from Excel " + fileInputStream);
             XSSFWorkbook workbook=(XSSFWorkbook) WorkbookFactory.create(file,"oli");
@@ -235,41 +221,33 @@ public class SettingsActivity extends AppCompatActivity {
             Sheet sh = workbook.getSheetAt(abrechnungGast1);
             int firstRowNumber =  sh.getFirstRowNum();
             int lastRowNumber = sh.getLastRowNum();
-            int lastColumn = sh.getRow(0).getLastCellNum();
-            Log.e(TAG, "Last Column: " + lastColumn);
 
             for (int rowNum = firstRowNumber+1; rowNum <= lastRowNumber; rowNum++) {
                 Row row = sh.getRow(rowNum);
                 if (row == null) {
                     // This whole row is empty
-                    // Handle it as needed
                     continue;
                 }
                 else {
-                    Cell cell = row.getCell(9);
-                    String getraenkName;
+                    Cell cell = row.getCell(9); // Spalte J enthält die Getränke Namen
                     try {
-                        getraenkName = dataFormatter.formatCellValue(cell, evaluator);
+                        String getraenkName = dataFormatter.formatCellValue(cell, evaluator);
                         if (rowNum >= 32 && getraenkName == "") {
                             break;
                         }
                         if (getraenkName.length() >= 2 && !getraenkName.startsWith("Verkaufspreise") && !getraenkName.startsWith("Knabbereien") && !getraenkName.startsWith("Vesper")) {
-                            Log.e(TAG, "Getränke Name: " + getraenkName);
-                            liste.add(getraenkName);
                             Getraenk getraenk = new Getraenk(getraenkName, rowNum);
                             getraenkDB.getGetraenkDAO().addGetraenk(getraenk);
                         }
                     } catch (RuntimeException e) {
-                        getraenkName = dataFormatter.formatCellValue(cell);
+                        continue;
                     }
                 }
             }
             fileInputStream.close();
 
-            Log.e(TAG, "fertige Liste: " + liste);
+            Log.e(TAG, "Getränke added to Database");
             workbook.close();
-            ((MyGlobalVariables) this.getApplication()).setGetraenkeListe((ArrayList<String>) liste);
-            Log.e(TAG, "getraenke Liste " + ((MyGlobalVariables) this.getApplication()).getGetraenkeListe());
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {

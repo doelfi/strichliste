@@ -37,7 +37,6 @@ public class ExportDataActivity extends AppCompatActivity {
     GastDatabase gastDB;
     String TAG = "ExportDataActivity";
     ArrayList<String> gaesteListe;
-    ArrayList<String> liste;
     private static final String NAME = "/Belegung Cannstatter Hütte Edition 2.4.xlsm";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +89,6 @@ public class ExportDataActivity extends AppCompatActivity {
         //Log.e(TAG, "External Storage state: " + Environment.getExternalStorageState());
 
         try {
-            liste = new ArrayList<String>();
             FileInputStream fileInputStream = new FileInputStream(file);
             Log.e(TAG, "Reading from Excel " + fileInputStream);
             XSSFWorkbook workbook=(XSSFWorkbook) WorkbookFactory.create(file,"oli");

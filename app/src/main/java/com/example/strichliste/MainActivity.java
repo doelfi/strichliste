@@ -27,7 +27,6 @@ public class MainActivity extends AppCompatActivity {
     ImageView ivLogoGrueneSchleife;
     Button newBtn;
     Space newSpace;
-    List<String> gaesteListe;
     String TAG = "MainActivity";
     BesucherInDatabase besucherInDB;
 
@@ -64,21 +63,20 @@ public class MainActivity extends AppCompatActivity {
         };
 
         besucherInDB = Room.databaseBuilder(getApplicationContext(), BesucherInDatabase.class, "BesucherInDB").addCallback(mainCallBack).build();
-        createGaesteListInBackground();
+        createGaesteButtonsInBackground();
     }
-    public void createGaesteListInBackground(){
+    public void createGaesteButtonsInBackground(){
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
         executorService.execute(new Runnable() {
             @Override
             public void run() {
                 // background task
-                gaesteListe = besucherInDB.getBesucherInDAO().getAllNames();//((MyGlobalVariables) MainActivity.this.getApplication()).getGaesteListe()
+                List<String> gaesteListe = besucherInDB.getBesucherInDAO().getAllNames();
                 // on finishing task
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        //Toast.makeText(MainActivity.this, "Created Liste", Toast.LENGTH_LONG).show();
                         createButtons(gaesteListe);
                     }
                 });

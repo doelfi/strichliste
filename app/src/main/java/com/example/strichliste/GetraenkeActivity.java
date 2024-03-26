@@ -1,6 +1,5 @@
 package com.example.strichliste;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,7 +11,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Space;
 import android.widget.TableLayout;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -35,14 +33,12 @@ public class GetraenkeActivity extends AppCompatActivity {
     GastDatabase gastDB;
     GetraenkDatabase getraenkDB;
     String TAG = "ExcelActivity";
-    private static final String NAME = "/Belegung Cannstatter Hütte Edition 2.4.xlsm";
-    List<String> liste;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_excel);
 
-        createGetraenkeListInBackground(GetraenkeActivity.this, NAME);
+        createGetraenkeButtonsInBackground();
 
         Intent intent = getIntent();
         gastName = intent.getStringExtra("gastName");
@@ -67,19 +63,19 @@ public class GetraenkeActivity extends AppCompatActivity {
         getraenkDB = Room.databaseBuilder(getApplicationContext(), GetraenkDatabase.class, "GetraenkDB").addCallback(mainCallBack).build();
     }
 
-    public void createGetraenkeListInBackground(Context context, String NAME){
+    public void createGetraenkeButtonsInBackground(){
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
         executorService.execute(new Runnable() {
             @Override
             public void run() {
                 // background task
-                liste = getraenkDB.getGetraenkDAO().getAllGetraenkeNames();
+                List<String> liste = getraenkDB.getGetraenkDAO().getAllGetraenkeNames();
                 // on finishing task
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(GetraenkeActivity.this, "Created Liste", Toast.LENGTH_LONG).show();
+                        //Toast.makeText(GetraenkeActivity.this, "Created Liste", Toast.LENGTH_LONG).show();
                         createButtons(liste);
                     }
                 });
