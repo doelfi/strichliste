@@ -1,6 +1,5 @@
 package com.example.strichliste;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -28,15 +27,16 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class ExportDataActivity extends AppCompatActivity {
     GastDatabase gastDB;
+    BesucherInDatabase besucherInDB;
     String TAG = "ExportDataActivity";
-    ArrayList<String> gaesteListe;
+    List<String> gaesteListe; //ArrayList<String> gaesteListe;
     private static final String NAME = "/Belegung Cannstatter Hütte Edition 2.4.xlsm";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,20 +56,19 @@ public class ExportDataActivity extends AppCompatActivity {
         };
 
         gastDB = Room.databaseBuilder(getApplicationContext(), GastDatabase.class, "AstDB").addCallback(mainCallBack).build();
-        gaesteListe = ((MyGlobalVariables) ExportDataActivity.this.getApplication()).getGaesteListe();
+        besucherInDB = Room.databaseBuilder(getApplicationContext(), BesucherInDatabase.class, "BesucherInDB").addCallback(mainCallBack).build();
 
-        extractGastDataInBackground("Lisa");
+        extractGastDataInBackground();
     }
-    public void extractGastDataInBackground(String name){
+    public void extractGastDataInBackground(){
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
-        Log.e(TAG, "ok ");
         executorService.execute(new Runnable() {
             @Override
             public void run() {
                 // background task
-                writeToGastGetraenkeList(ExportDataActivity.this, NAME);
-                // gastDB.getGastDao().getSummeGastGetraenkZeitpunkt(name, "bla", new Date(), new Date());
+                gaesteListe = besucherInDB.getBesucherInDAO().getAllNames();
+                writeToGastGetraenkeList(NAME);
                 // on finishing task
                 handler.post(new Runnable() {
                     @Override
@@ -82,11 +81,10 @@ public class ExportDataActivity extends AppCompatActivity {
     }
 
 
-    public void writeToGastGetraenkeList(Context context, String NAME) {
+    public void writeToGastGetraenkeList(String NAME) {
         //File file = new File(context.getExternalFilesDir(null), NAME);
         File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS + NAME).toURI());
         Log.e(TAG, "I got the file " + file.getPath());
-        //Log.e(TAG, "External Storage state: " + Environment.getExternalStorageState());
 
         try {
             FileInputStream fileInputStream = new FileInputStream(file);
@@ -96,7 +94,6 @@ public class ExportDataActivity extends AppCompatActivity {
             FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
             DataFormatter dataFormatter = new DataFormatter();
             workbook.setMissingCellPolicy(Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
-            gaesteListe = ((MyGlobalVariables) this.getApplication()).getGaesteListe();
             String gastName;
 
             for (int nameIndex = 0; nameIndex < gaesteListe.size(); nameIndex++) {
@@ -126,7 +123,6 @@ public class ExportDataActivity extends AppCompatActivity {
                         } catch (RuntimeException e) {
                             getraenkName = dataFormatter.formatCellValue(cell);
                         }
-                        // Log.e(TAG, "Getränke Name: " + getraenkName);
                         for (int cn = 9; cn < lastColumn; cn++) {
                             Cell c = row.getCell(cn, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
                             int anzahl;

@@ -7,7 +7,6 @@
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
 
     <application
-        android:name=".MyGlobalVariables"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -24,16 +23,10 @@
             android:name=".SettingsActivity"
             android:exported="false" />
         <activity
-            android:name=".GastActivity"
-            android:exported="false" />
-        <activity
             android:name=".GuestActivity"
             android:exported="false" />
         <activity
             android:name=".GetraenkeActivity"
-            android:exported="false" />
-        <activity
-            android:name=".DrinkActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
