@@ -131,12 +131,12 @@ public class SettingsActivity extends AppCompatActivity {
                 @Override
                 public void onActivityResult(Uri uri) {
                     // Handle the returned Uri
-                    File file;
+                    Toast.makeText(SettingsActivity.this, "Uploading", Toast.LENGTH_LONG).show();
                     String path = uri.getPath();
                     Log.e(TAG, path);
                     // @ToDo: hardcoded!!!
                     path = path.substring(path.lastIndexOf("/"));
-                    file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS + path).toURI());
+                    File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS + path).toURI());
                     createGaesteListInBackground(file);
                 }
             });

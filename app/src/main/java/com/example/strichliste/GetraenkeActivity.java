@@ -22,7 +22,6 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -34,9 +33,10 @@ public class GetraenkeActivity extends AppCompatActivity {
     Space newSpace;
     String gastName;
     GastDatabase gastDB;
+    GetraenkDatabase getraenkDB;
     String TAG = "ExcelActivity";
-    private static final String NAME = "/Belegung Cannstatter Hütte Edition 2.4.xlsm"; // "/getraenkeUndGaeste.xlsx";
-    public static List<String> liste = new ArrayList<String>();
+    private static final String NAME = "/Belegung Cannstatter Hütte Edition 2.4.xlsm";
+    List<String> liste;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,16 +64,17 @@ public class GetraenkeActivity extends AppCompatActivity {
         };
 
         gastDB = Room.databaseBuilder(getApplicationContext(), GastDatabase.class, "AstDB").addCallback(mainCallBack).build();
+        getraenkDB = Room.databaseBuilder(getApplicationContext(), GetraenkDatabase.class, "GetraenkDB").addCallback(mainCallBack).build();
     }
 
     public void createGetraenkeListInBackground(Context context, String NAME){
-        ExecutorService executorService = Executors.newFixedThreadPool(1);//newSingleThreadExecutor();
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
         executorService.execute(new Runnable() {
             @Override
             public void run() {
                 // background task
-                liste = ((MyGlobalVariables) GetraenkeActivity.this.getApplication()).getGetraenkeListe();
+                liste = getraenkDB.getGetraenkDAO().getAllGetraenkeNames();
                 // on finishing task
                 handler.post(new Runnable() {
                     @Override
