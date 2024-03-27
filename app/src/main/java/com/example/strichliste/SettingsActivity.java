@@ -62,7 +62,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         tvHint = findViewById(R.id.tvHint);
 
-        edText = findViewById(R.id.edText);
+        //edText = findViewById(R.id.edText);
 
         btnHueWa = findViewById(R.id.btnHueWa);
         btnPickFromFiles = findViewById(R.id.btnPickFromFiles);

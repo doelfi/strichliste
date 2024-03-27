@@ -105,6 +105,10 @@ public class MainActivity extends AppCompatActivity {
             newBtn.setTextColor(getColor(R.color.white));
             newBtn.setTextSize(20);
             String gastName = newBtn.getText().toString();
+            newSpace = new Space(this);
+            newSpace.setLayoutParams(layoutParams2);
+            layout.addView(newSpace);
+            layout.addView(newBtn);
             newBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -113,15 +117,11 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(intent);
                 }
             });
-            newSpace = new Space(this);
-            newSpace.setLayoutParams(layoutParams2);
-            layout.addView(newSpace);
-            layout.addView(newBtn);
+
 
             if (i % 10 == 0 && i != 0) {
                 column ++;
             }
         }
-
     }
 }

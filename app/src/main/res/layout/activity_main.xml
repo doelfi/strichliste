@@ -4,10 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
+    android:backgroundTint="@color/white"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context=".MainActivity"
-    android:stretchColumns="0,1,2">
+    android:stretchColumns="0,1,2"
+    tools:context=".MainActivity">
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -17,48 +20,46 @@
             android:layout_height="match_parent"
             android:stretchColumns="0,1,2">
 
-            <TableRow
-                android:id="@+id/row1">
+            <TableRow android:id="@+id/row1">
+
                 <LinearLayout
+                    android:id="@+id/column1"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
-                    android:orientation="vertical"
                     android:gravity="center"
-                    android:id = "@+id/column1">
+                    android:orientation="vertical"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp">
 
                     <Button
                         android:id="@+id/btnHueWa"
                         android:layout_width="match_parent"
-                        android:layout_height="105dp"
+                        android:layout_height="wrap_content"
                         android:backgroundTint="@color/gruene_schleife"
-                        android:text="@string/text_button_huewa"
-                        android:textSize="24sp"
-                        android:textColor="@color/white"
-                        android:textStyle="bold"
                         android:drawableRight="@drawable/logo_huette_button_size"
-                        />
+                        android:text="@string/text_button_huewa"
+                        android:textColor="@color/white"
+                        android:textSize="24sp"
+                        android:textStyle="bold" />
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/column2"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
-                    android:orientation="vertical"
                     android:gravity="center"
-                    android:id = "@+id/column2">
-                </LinearLayout>
+                    android:orientation="vertical"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"></LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/column3"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
-                    android:orientation="vertical"
                     android:gravity="center"
-                    android:id = "@+id/column3">
+                    android:orientation="vertical"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp">
 
                     <ImageView
                         android:id="@+id/ivLogoGrueneSchleife"

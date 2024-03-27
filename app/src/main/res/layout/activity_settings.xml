@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
+    android:backgroundTint="@color/white"
     android:gravity="center"
     android:orientation="vertical"
     tools:context=".SettingsActivity">
@@ -18,28 +20,37 @@
     <Button
         android:id="@+id/btnHueWa"
         android:layout_width="match_parent"
-        android:layout_height="105dp"
-        android:layout_marginLeft="300dp"
-        android:layout_marginRight="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
         android:backgroundTint="@color/gruene_schleife"
         android:text="@string/text_button_home"
+        android:textColor="@color/white"
+        android:textColorHighlight="@color/white"
         android:textSize="24sp"
         android:textStyle="bold" />
 
     <Button
         android:id="@+id/btnPickFromFiles"
         android:layout_width="match_parent"
-        android:layout_height="105dp"
-        android:layout_marginLeft="300dp"
-        android:layout_marginRight="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:backgroundTint="@color/gruene_schleife"
         android:text="@string/text_button_Pick_From_Files"
-        android:textSize="24sp"/>
+        android:textColor="@color/white"
+        android:textSize="24sp" />
 
     <Button
         android:id="@+id/btnHint"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/text_button_export_data" />
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:backgroundTint="@color/gruene_schleife"
+        android:text="@string/text_button_export_data"
+        android:textColor="@color/white"
+        android:textSize="24sp" />
 
     <TextView
         android:id="@+id/tvHint"
@@ -49,12 +60,4 @@
         android:textAlignment="center"
         android:visibility="invisible" />
 
-    <EditText
-        android:id="@+id/edText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="text"
-        android:text="Hier könnte Ihre Werbung stehen."
-        android:textAlignment="center" />
 </LinearLayout>
