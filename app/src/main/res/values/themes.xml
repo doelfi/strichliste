@@ -5,9 +5,8 @@
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
         <item name="colorPrimary">@color/gruene_schleife</item>
         <item name="android:textColorHighlight">@color/white</item>
-        <item name="android:background">@color/white</item>
+
         <item name="android:textColor">@color/white</item>
-        <item name="android:backgroundTint">@color/white</item>
     </style>
 
     <style name="Theme.Strichliste" parent="Base.Theme.Strichliste" />

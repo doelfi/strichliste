@@ -8,6 +8,7 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Space;
 import android.widget.TableLayout;
@@ -38,13 +39,13 @@ public class GetraenkeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_excel);
 
+        receiveDatabase();
+
         createGetraenkeButtonsInBackground();
 
         Intent intent = getIntent();
         gastName = intent.getStringExtra("gastName");
-
-        receiveDatabase();
-        }
+    }
 
     public void receiveDatabase(){
         RoomDatabase.Callback mainCallBack = new RoomDatabase.Callback() {
@@ -123,17 +124,26 @@ public class GetraenkeActivity extends AppCompatActivity {
     }
 
     private void confirmBestellung(String getraenkeName){
+        final EditText etAnzahlGetraenk = new EditText(GetraenkeActivity.this);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT);
+        etAnzahlGetraenk.setLayoutParams(lp);
+        etAnzahlGetraenk.setPadding(100,30,100,30);
+        etAnzahlGetraenk.setText("1");
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Möchtest du, " + gastName + ", wirklich Folgendes bestellen?\n" +
                         getraenkeName)
                 .setTitle("Bestellbestätigung")
+                .setView(etAnzahlGetraenk)
                 .setCancelable(false)
                 .setNegativeButton("Abbrechen", ((dialog, which) -> dialog.dismiss()))
                 .setPositiveButton("Bestätigen", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
-                        int anzahl = 1;
+                        int anzahl = Integer.valueOf(etAnzahlGetraenk.getText().toString());
                         Date zeitpunkt = new Date();
 
                         Gast bestellung = new Gast(gastName, getraenkeName, anzahl, zeitpunkt);
