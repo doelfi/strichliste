@@ -3,7 +3,10 @@
     <string name="text_button_huewa">"Einstellungen"</string>
     <string name="text_button_settings">"Settings"</string>
     <string name="text_button_hint">"Hint"</string>
-    <string name="text_button_export_data">"Daten exportieren"</string>
+    <string name="text_button_export_data">"Bestelldaten exportieren"</string>
+    <string name="text_button_löschen">"Gästedaten löschen"</string>
+
+    <string name="text_button_ende">"Ende des Aufenthalts"</string>
 
     <string name="text_button_home">"Startseite"</string>
 

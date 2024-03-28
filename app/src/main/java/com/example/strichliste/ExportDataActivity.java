@@ -5,6 +5,10 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -33,16 +37,46 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class ExportDataActivity extends AppCompatActivity {
+
+    Button btnExportData;
+    Button btnDeleteGuests;
+
+    ImageView ivLogoGrueneSchleife;
     GastDatabase gastDB;
     BesucherInDatabase besucherInDB;
     String TAG = "ExportDataActivity";
-    List<String> gaesteListe; //ArrayList<String> gaesteListe;
+    List<String> gaesteListe;
     private static final String NAME = "/Belegung Cannstatter Hütte Edition 2.4.xlsm";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_export_data);
 
+        ivLogoGrueneSchleife = findViewById(R.id.ivLogoGrueneSchleife);
+        int imageID = getResources().getIdentifier("logo_gruene_schleife", "drawable", getPackageName());
+        ivLogoGrueneSchleife.setImageResource(imageID);
+
+        btnExportData = findViewById(R.id.btnExportData);
+        btnDeleteGuests = findViewById(R.id.btnDeleteGuests);
+
+        btnExportData.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                extractGastDataInBackground();
+            }
+        });
+
+        btnDeleteGuests.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteGuestDataInBackground();
+            }
+        });
+
+        receiveDatabase();
+    }
+
+    public void receiveDatabase() {
         RoomDatabase.Callback mainCallBack = new RoomDatabase.Callback() {
             @Override
             public void onCreate(@NonNull SupportSQLiteDatabase db) {
@@ -57,10 +91,32 @@ public class ExportDataActivity extends AppCompatActivity {
 
         gastDB = Room.databaseBuilder(getApplicationContext(), GastDatabase.class, "AstDB").addCallback(mainCallBack).build();
         besucherInDB = Room.databaseBuilder(getApplicationContext(), BesucherInDatabase.class, "BesucherInDB").addCallback(mainCallBack).build();
-
-        extractGastDataInBackground();
     }
+
+    public void deleteGuestDataInBackground(){
+        // @ToDo: confirmation window
+        // @ToDo: When to delete orders? After 1 year, ...
+        Toast.makeText(ExportDataActivity.this, "Deleting", Toast.LENGTH_LONG).show();
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                List<BesucherIn> allGuests = besucherInDB.getBesucherInDAO().getAll();
+                Log.e(TAG, allGuests.get(1).name);
+                besucherInDB.getBesucherInDAO().deleteAllBesucherIn(allGuests);
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(ExportDataActivity.this, "Deleted all Guest Data", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        });
+    }
+
     public void extractGastDataInBackground(){
+        Toast.makeText(ExportDataActivity.this, "Exporting", Toast.LENGTH_LONG).show();
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
         executorService.execute(new Runnable() {
@@ -74,6 +130,7 @@ public class ExportDataActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         Log.e(TAG, "Done with exporting Data");
+                        Toast.makeText(ExportDataActivity.this, "Daten exportiert", Toast.LENGTH_LONG).show();
                     }
                 });
             }
@@ -128,7 +185,7 @@ public class ExportDataActivity extends AppCompatActivity {
                             int anzahl;
                             try {
                                 long day = dateToMilliseconds(dataFormatter.formatCellValue(sh.getRow(0).getCell(cn), evaluator));
-                                long day2 = dateToMilliseconds("25/03/24");
+                                long day2 = dateToMilliseconds("28/03/24");
                                 try {
                                     anzahl = gastDB.getGastDao().getSummeGastGetraenkZeitpunkt(gastName, getraenkName, day2, day2 + 86400000);
                                     if (anzahl != 0) {

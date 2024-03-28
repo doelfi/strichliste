@@ -4,6 +4,38 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="bottom|center"
+    android:orientation="vertical"
     tools:context=".ExportDataActivity">
+
+    <ImageView
+        android:id="@+id/ivLogoGrueneSchleife"
+        android:layout_width="198dp"
+        android:layout_height="182dp"
+        android:layout_weight="1"
+        tools:srcCompat="@drawable/logo_gruene_schleife" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnExportData"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/text_button_export_data"
+            android:textSize="24sp" />
+
+        <Button
+            android:id="@+id/btnDeleteGuests"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/text_button_löschen"
+            android:textSize="24sp" />
+    </LinearLayout>
 
 </LinearLayout>

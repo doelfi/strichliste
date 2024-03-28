@@ -57,7 +57,7 @@
             android:layout_marginRight="30dp"
             android:layout_weight="1"
             android:backgroundTint="@color/gruene_schleife"
-            android:text="@string/text_button_export_data"
+            android:text="@string/text_button_ende"
             android:textColor="@color/white"
             android:textSize="24sp" />
     </LinearLayout>

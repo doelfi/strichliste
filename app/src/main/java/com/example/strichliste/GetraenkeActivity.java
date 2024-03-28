@@ -133,6 +133,7 @@ public class GetraenkeActivity extends AppCompatActivity {
         etAnzahlGetraenk.setText("1");
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        // @ToDo: Textcolor Bestellbestätigung
         builder.setMessage("Möchtest du, " + gastName + ", wirklich Folgendes bestellen?\n" +
                         getraenkeName)
                 .setTitle("Bestellbestätigung")
