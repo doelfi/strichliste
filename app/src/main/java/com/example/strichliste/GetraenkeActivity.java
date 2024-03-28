@@ -92,9 +92,9 @@ public class GetraenkeActivity extends AppCompatActivity {
         LinearLayout layout;
         // @ToDo: hardcoded, dass Einnahmen Verkaufspreise nicht mit drin sind
         for (int i=0; i < liste.size(); i++) {
-            if (column == 1) {
+            if (i % 3 == 0) {
                 layout = findViewById(R.id.column1);
-            } else if (column == 2) {
+            } else if (i % 3 == 1) {
                 layout = findViewById(R.id.column2);
             } else {
                 layout = findViewById(R.id.column3);
@@ -116,10 +116,6 @@ public class GetraenkeActivity extends AppCompatActivity {
             newSpace.setLayoutParams(layoutParams2);
             layout.addView(newSpace);
             layout.addView(newBtn);
-
-            if (i % 9 == 0 && i != 0) {
-                column ++;
-            }
         }
     }
 

@@ -40,7 +40,6 @@ public class ExportDataActivity extends AppCompatActivity {
 
     Button btnExportData;
     Button btnDeleteGuests;
-
     ImageView ivLogoGrueneSchleife;
     GastDatabase gastDB;
     BesucherInDatabase besucherInDB;
