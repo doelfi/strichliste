@@ -50,6 +50,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        receiveDatabase();
+
+        createGaesteButtonsInBackground();
+    }
+    public void receiveDatabase() {
         RoomDatabase.Callback mainCallBack = new RoomDatabase.Callback() {
             @Override
             public void onCreate(@NonNull SupportSQLiteDatabase db) {
@@ -61,9 +66,7 @@ public class MainActivity extends AppCompatActivity {
                 super.onDestructiveMigration(db);
             }
         };
-
         besucherInDB = Room.databaseBuilder(getApplicationContext(), BesucherInDatabase.class, "BesucherInDB").addCallback(mainCallBack).build();
-        createGaesteButtonsInBackground();
     }
     public void createGaesteButtonsInBackground(){
         ExecutorService executorService = Executors.newSingleThreadExecutor();
