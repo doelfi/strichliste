@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
+    android:backgroundTint="@color/white"
     android:gravity="bottom|center"
     android:orientation="vertical"
     tools:context=".ExportDataActivity">
@@ -17,24 +19,31 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <Button
             android:id="@+id/btnExportData"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginBottom="30dp"
             android:layout_weight="1"
             android:text="@string/text_button_export_data"
+            android:textColor="@color/white"
             android:textSize="24sp" />
 
         <Button
             android:id="@+id/btnDeleteGuests"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginBottom="30dp"
             android:layout_weight="1"
             android:text="@string/text_button_löschen"
+            android:textColor="@color/white"
             android:textSize="24sp" />
     </LinearLayout>
 
