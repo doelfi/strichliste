@@ -6,7 +6,20 @@
         <State />
       </entry>
       <entry key="MainActivity">
-        <State />
+        <State>
+          <runningDeviceTargetSelectedWithDropDown>
+            <Target>
+              <type value="RUNNING_DEVICE_TARGET" />
+              <deviceKey>
+                <Key>
+                  <type value="SERIAL_NUMBER" />
+                  <value value="R58N149Y77Y" />
+                </Key>
+              </deviceKey>
+            </Target>
+          </runningDeviceTargetSelectedWithDropDown>
+          <timeTargetWasSelectedWithDropDown value="2024-04-08T19:05:14.196376985Z" />
+        </State>
       </entry>
       <entry key="app">
         <State>

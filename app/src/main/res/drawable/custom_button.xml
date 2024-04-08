@@ -6,7 +6,7 @@
             android:color="@color/gruene_schleife"
             android:width="1dp"/>
         <corners
-            android:radius="190dp"/>
+            android:radius="1dp"/>
         <solid
             android:color="@color/gruene_schleife"/>
         <gradient

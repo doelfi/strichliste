@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -35,15 +36,15 @@
                         android:layout_weight="1"
                         tools:srcCompat="@drawable/logo_gruene_schleife" />
 
-                    <Button
+                    <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/btnHueWa"
+                        android:background="@drawable/fixed_button"
                         android:layout_width="0dp"
-                        android:layout_height="70sp"
+                        android:layout_height="80sp"
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="10dp"
-                        android:layout_marginTop="15dp"
+                        android:layout_marginTop="10dp"
                         android:layout_weight="1"
-                        android:backgroundTint="@color/gruene_schleife"
                         android:text="@string/text_button_huewa"
                         android:textColor="@color/white"
                         android:textSize="24sp"
@@ -75,7 +76,9 @@
                     android:gravity="center"
                     android:orientation="vertical"
                     android:paddingLeft="10dp"
-                    android:paddingRight="10dp"></LinearLayout>
+                    android:paddingRight="10dp">
+
+                </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/column3"
