@@ -22,8 +22,9 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnExportData"
+            android:background="@drawable/fixed_button"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginLeft="30dp"
@@ -34,8 +35,9 @@
             android:textColor="@color/white"
             android:textSize="24sp" />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnDeleteGuests"
+            android:background="@drawable/fixed_button"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginLeft="30dp"
