@@ -184,9 +184,9 @@ public class ExportDataActivity extends AppCompatActivity {
                             int anzahl;
                             try {
                                 long day = dateToMilliseconds(dataFormatter.formatCellValue(sh.getRow(0).getCell(cn), evaluator));
-                                long day2 = dateToMilliseconds("28/03/24");
+                                //long day2 = dateToMilliseconds("28/03/24");
                                 try {
-                                    anzahl = gastDB.getGastDao().getSummeGastGetraenkZeitpunkt(gastName, getraenkName, day2, day2 + 86400000);
+                                    anzahl = gastDB.getGastDao().getSummeGastGetraenkZeitpunkt(gastName, getraenkName, day, day + 86400000);
                                     if (anzahl != 0) {
                                         c.setCellValue(anzahl);
                                         //Log.e(TAG, "Day in ms: " + day + "\n Amount of Drink " + getraenkName + ": " + anzahl);
@@ -204,7 +204,7 @@ public class ExportDataActivity extends AppCompatActivity {
             }
             fileInputStream.close();
 
-            FileOutputStream fileOutputStream = new FileOutputStream("/storage/emulated/0/Download/Getraenke.xlsm");
+            FileOutputStream fileOutputStream = new FileOutputStream("/storage/emulated/0/Download" + NAME); //Getraenke.xlsm");
             workbook.write(fileOutputStream);
             workbook.close();
             fileOutputStream.close();
