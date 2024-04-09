@@ -42,10 +42,12 @@ public class ExportDataActivity extends AppCompatActivity {
     Button btnDeleteGuests;
     ImageView ivLogoGrueneSchleife;
     GastDatabase gastDB;
+    GastDatabase bestellungDB;
     BesucherInDatabase besucherInDB;
     String TAG = "ExportDataActivity";
+    Long startTag;
     List<String> gaesteListe;
-    private static final String NAME = "/Belegung Cannstatter Hütte Edition 2.4.xlsm";
+    private String NAME = "";///Belegung Cannstatter Hütte Edition 2.4.xlsm";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,6 +75,7 @@ public class ExportDataActivity extends AppCompatActivity {
         });
 
         receiveDatabase();
+        deleteOldDataBase();
     }
 
     public void receiveDatabase() {
@@ -89,12 +92,13 @@ public class ExportDataActivity extends AppCompatActivity {
         };
 
         gastDB = Room.databaseBuilder(getApplicationContext(), GastDatabase.class, "AstDB").addCallback(mainCallBack).build();
+        bestellungDB = Room.databaseBuilder(getApplicationContext(), GastDatabase.class, "BestellungDB").addCallback(mainCallBack).build();
         besucherInDB = Room.databaseBuilder(getApplicationContext(), BesucherInDatabase.class, "BesucherInDB").addCallback(mainCallBack).build();
     }
 
     public void deleteGuestDataInBackground(){
         // @ToDo: confirmation window
-        // @ToDo: When to delete orders? After 1 year, ...
+        // Orders deleted after 30 days
         Toast.makeText(ExportDataActivity.this, "Deleting", Toast.LENGTH_LONG).show();
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
@@ -104,6 +108,7 @@ public class ExportDataActivity extends AppCompatActivity {
                 List<BesucherIn> allGuests = besucherInDB.getBesucherInDAO().getAll();
                 Log.e(TAG, allGuests.get(1).name);
                 besucherInDB.getBesucherInDAO().deleteAllBesucherIn(allGuests);
+                deleteOldData();
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
@@ -123,7 +128,7 @@ public class ExportDataActivity extends AppCompatActivity {
             public void run() {
                 // background task
                 gaesteListe = besucherInDB.getBesucherInDAO().getAllNames();
-                writeToGastGetraenkeList(NAME);
+                writeToGastGetraenkeList();
                 // on finishing task
                 handler.post(new Runnable() {
                     @Override
@@ -137,8 +142,11 @@ public class ExportDataActivity extends AppCompatActivity {
     }
 
 
-    public void writeToGastGetraenkeList(String NAME) {
+    public void writeToGastGetraenkeList() {
         //File file = new File(context.getExternalFilesDir(null), NAME);
+        final MyGlobalVariables globalVariable = (MyGlobalVariables) getApplicationContext();
+        String NAME = globalVariable.getFileName();
+
         File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS + NAME).toURI());
         Log.e(TAG, "I got the file " + file.getPath());
 
@@ -184,9 +192,11 @@ public class ExportDataActivity extends AppCompatActivity {
                             int anzahl;
                             try {
                                 long day = dateToMilliseconds(dataFormatter.formatCellValue(sh.getRow(0).getCell(cn), evaluator));
-                                //long day2 = dateToMilliseconds("28/03/24");
+                                if (cn == 9) {
+                                    startTag = day;
+                                }
                                 try {
-                                    anzahl = gastDB.getGastDao().getSummeGastGetraenkZeitpunkt(gastName, getraenkName, day, day + 86400000);
+                                    anzahl = bestellungDB.getGastDao().getSummeGastGetraenkZeitpunkt(gastName, getraenkName, day, day + 86400000);
                                     if (anzahl != 0) {
                                         c.setCellValue(anzahl);
                                         //Log.e(TAG, "Day in ms: " + day + "\n Amount of Drink " + getraenkName + ": " + anzahl);
@@ -230,4 +240,22 @@ public class ExportDataActivity extends AppCompatActivity {
         }
         return millis;
     }
+
+    public void deleteOldDataBase(){
+        boolean deleted = this.deleteDatabase("GastDB");
+        Log.e(TAG, String.valueOf(deleted));
+    }
+
+    public void deleteOldData() {
+        Long vorDreissigTagen = dateToMilliseconds("23/09/2023");
+        try {
+            vorDreissigTagen = startTag - 86400000 * 30;
+        }catch(NullPointerException e) {
+
+        }
+        List<Gast> alteBestellungen = bestellungDB.getGastDao().getAllOldBestellungen(vorDreissigTagen);
+        bestellungDB.getGastDao().deleteAllGast(alteBestellungen);
+        Log.e(TAG, "Alte Bestellungen gelöscht");
+    }
+
 }

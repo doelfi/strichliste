@@ -50,7 +50,6 @@ public class SettingsActivity extends AppCompatActivity {
     TextView tvHint;
     EditText edText;
     ImageView ivLogoGrueneSchleife;
-
     final String prefNameFirstStart = "firstAppStart";
 
     @Override
@@ -130,8 +129,13 @@ public class SettingsActivity extends AppCompatActivity {
                     Toast.makeText(SettingsActivity.this, "Uploading", Toast.LENGTH_LONG).show();
                     String path = uri.getPath();
                     Log.e(TAG, path);
-                    // @ToDo: hardcoded!!!
+                    // extract only filename from path @ToDo: hardcoded!!!
                     path = path.substring(path.lastIndexOf("/"));
+
+                    // save file name to global variable
+                    final MyGlobalVariables globalVariable = (MyGlobalVariables) getApplicationContext();
+                    globalVariable.setFileName(path);
+
                     File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS + path).toURI());
                     createGaesteListInBackground(file);
                 }

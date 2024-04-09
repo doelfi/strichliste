@@ -31,7 +31,7 @@ public class GetraenkeActivity extends AppCompatActivity {
     Button newBtn;
     Space newSpace;
     String gastName;
-    GastDatabase gastDB;
+    GastDatabase bestellungDB;
     GetraenkDatabase getraenkDB;
     String TAG = "ExcelActivity";
     @Override
@@ -60,7 +60,7 @@ public class GetraenkeActivity extends AppCompatActivity {
             }
         };
 
-        gastDB = Room.databaseBuilder(getApplicationContext(), GastDatabase.class, "AstDB").addCallback(mainCallBack).build();
+        bestellungDB = Room.databaseBuilder(getApplicationContext(), GastDatabase.class, "BestellungDB").addCallback(mainCallBack).build();
         getraenkDB = Room.databaseBuilder(getApplicationContext(), GetraenkDatabase.class, "GetraenkDB").addCallback(mainCallBack).build();
     }
 
@@ -162,7 +162,7 @@ public class GetraenkeActivity extends AppCompatActivity {
             @Override
             public void run() {
                 // background task
-                gastDB.getGastDao().addGast(gast);
+                bestellungDB.getGastDao().addGast(gast);
                 // on finishing task
                 handler.post(new Runnable() {
                     @Override

@@ -25,4 +25,6 @@ public interface GastDAO {
     public Gast getGastGetraenk(String name, String getraenk);
     @Query("select SUM(anzahl) as gesamtmenge from gast where name==:name AND getraenk==:getraenk AND zeitpunkt >= :start_zeitpunkt AND zeitpunkt < :end_zeitpunkt")
     public int getSummeGastGetraenkZeitpunkt(String name, String getraenk, long start_zeitpunkt, long end_zeitpunkt);
+    @Query("select * from gast where zeitpunkt <= :vorDreissigTagen")
+    public List<Gast> getAllOldBestellungen(long vorDreissigTagen);
 }
