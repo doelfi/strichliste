@@ -81,7 +81,7 @@ public class ExportDataActivity extends AppCompatActivity {
         });
 
         receiveDatabase();
-        //deleteOldDataBase();
+        deleteOldDataBase();
     }
 
     public void receiveDatabase() {
@@ -105,20 +105,23 @@ public class ExportDataActivity extends AppCompatActivity {
     public void deleteGuestDataInBackground(){
         // @ToDo: confirmation window
         // Orders deleted after 30 days
-        Toast.makeText(ExportDataActivity.this, "Deleting", Toast.LENGTH_LONG).show();
+        Toast.makeText(ExportDataActivity.this, "Löschen", Toast.LENGTH_LONG).show();
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
         executorService.execute(new Runnable() {
             @Override
             public void run() {
-                List<BesucherIn> allGuests = besucherInDB.getBesucherInDAO().getAll();
-                Log.e(TAG, allGuests.get(1).name);
-                besucherInDB.getBesucherInDAO().deleteAllBesucherIn(allGuests);
+                try {
+                    List<BesucherIn> allGuests = besucherInDB.getBesucherInDAO().getAll();
+                    besucherInDB.getBesucherInDAO().deleteAllBesucherIn(allGuests);
+                } catch (IndexOutOfBoundsException e) {
+
+                }
                 deleteOldData();
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(ExportDataActivity.this, "Deleted all Guest Data", Toast.LENGTH_LONG).show();
+                        Toast.makeText(ExportDataActivity.this, "Gästedaten gelöscht", Toast.LENGTH_LONG).show();
                     }
                 });
             }
@@ -126,7 +129,7 @@ public class ExportDataActivity extends AppCompatActivity {
     }
 
     public void extractGastDataInBackground(File file){
-        Toast.makeText(ExportDataActivity.this, "Exporting", Toast.LENGTH_LONG).show();
+        Toast.makeText(ExportDataActivity.this, "Exportieren", Toast.LENGTH_LONG).show();
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
         executorService.execute(new Runnable() {
@@ -243,7 +246,7 @@ public class ExportDataActivity extends AppCompatActivity {
     }
 
     public void deleteOldDataBase(){
-        boolean deleted = this.deleteDatabase("GastDB");
+        boolean deleted = this.deleteDatabase("AstDB");
         Log.e(TAG, String.valueOf(deleted));
     }
 

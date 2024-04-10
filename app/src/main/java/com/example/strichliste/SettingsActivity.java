@@ -148,7 +148,7 @@ public class SettingsActivity extends AppCompatActivity {
                 @Override
                 public void onActivityResult(Uri uri) {
                     // Handle the returned Uri
-                    Toast.makeText(SettingsActivity.this, "Uploading", Toast.LENGTH_LONG).show();
+                    Toast.makeText(SettingsActivity.this, "Hochladen", Toast.LENGTH_LONG).show();
 
                     try {
                         File file = getFileFromUri(SettingsActivity.this, uri);
@@ -191,7 +191,7 @@ public class SettingsActivity extends AppCompatActivity {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(SettingsActivity.this, "Created Database", Toast.LENGTH_LONG).show();
+                        Toast.makeText(SettingsActivity.this, "Datenbanken erstellt", Toast.LENGTH_LONG).show();
                     }
                 });
             }
@@ -317,6 +317,7 @@ public class SettingsActivity extends AppCompatActivity {
      * @param uri     The Uri to query.
      */
     public static File getFileFromUri(final Context context, final Uri uri) throws Exception {
+        // https://gist.github.com/walkingError/915c73ae48882072dc0e8467a813046f
 
         String path = null;
 
@@ -533,6 +534,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     public boolean checkStoragePermissions(){
+        // https://medium.com/@kezzieleo/manage-external-storage-permission-android-studio-java-9c3554cf79a7
         //Android is 11 (R) or above
         return Environment.isExternalStorageManager();
 }
