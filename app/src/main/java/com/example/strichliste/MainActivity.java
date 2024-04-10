@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Space;
@@ -24,6 +25,7 @@ import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity {
     Button btnHueWa;
+    ImageButton btnIconSettings;
     ImageView ivLogoGrueneSchleife;
     Button newBtn;
     Space newSpace;
@@ -42,7 +44,9 @@ public class MainActivity extends AppCompatActivity {
 
         btnHueWa = findViewById(R.id.btnHueWa);
 
-        btnHueWa.setOnClickListener(new View.OnClickListener() {
+        btnIconSettings = findViewById(R.id.btnIconSettings);
+
+        btnIconSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, SettingsActivity.class);

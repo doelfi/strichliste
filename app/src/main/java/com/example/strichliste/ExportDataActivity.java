@@ -47,7 +47,6 @@ public class ExportDataActivity extends AppCompatActivity {
     String TAG = "ExportDataActivity";
     Long startTag;
     List<String> gaesteListe;
-    private String NAME = "";///Belegung Cannstatter Hütte Edition 2.4.xlsm";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
