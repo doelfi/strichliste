@@ -1,7 +1,6 @@
 package com.example.strichliste;
 
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -29,6 +28,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -63,7 +63,13 @@ public class ExportDataActivity extends AppCompatActivity {
         btnExportData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                extractGastDataInBackground();
+                //get file from global variable
+                final MyGlobalVariables globalVariable = (MyGlobalVariables) getApplicationContext();
+                Path path = globalVariable.getFileName();
+
+                File file = path.toFile();
+
+                extractGastDataInBackground(file);
             }
         });
 
@@ -75,7 +81,7 @@ public class ExportDataActivity extends AppCompatActivity {
         });
 
         receiveDatabase();
-        deleteOldDataBase();
+        //deleteOldDataBase();
     }
 
     public void receiveDatabase() {
@@ -119,7 +125,7 @@ public class ExportDataActivity extends AppCompatActivity {
         });
     }
 
-    public void extractGastDataInBackground(){
+    public void extractGastDataInBackground(File file){
         Toast.makeText(ExportDataActivity.this, "Exporting", Toast.LENGTH_LONG).show();
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
@@ -128,7 +134,7 @@ public class ExportDataActivity extends AppCompatActivity {
             public void run() {
                 // background task
                 gaesteListe = besucherInDB.getBesucherInDAO().getAllNames();
-                writeToGastGetraenkeList();
+                writeToGastGetraenkeList(file);
                 // on finishing task
                 handler.post(new Runnable() {
                     @Override
@@ -142,12 +148,7 @@ public class ExportDataActivity extends AppCompatActivity {
     }
 
 
-    public void writeToGastGetraenkeList() {
-        //File file = new File(context.getExternalFilesDir(null), NAME);
-        final MyGlobalVariables globalVariable = (MyGlobalVariables) getApplicationContext();
-        String NAME = globalVariable.getFileName();
-
-        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS + NAME).toURI());
+    public void writeToGastGetraenkeList(File file) {
         Log.e(TAG, "I got the file " + file.getPath());
 
         try {
@@ -214,7 +215,7 @@ public class ExportDataActivity extends AppCompatActivity {
             }
             fileInputStream.close();
 
-            FileOutputStream fileOutputStream = new FileOutputStream("/storage/emulated/0/Download" + NAME); //Getraenke.xlsm");
+            FileOutputStream fileOutputStream = new FileOutputStream(file); //Getraenke.xlsm");
             workbook.write(fileOutputStream);
             workbook.close();
             fileOutputStream.close();

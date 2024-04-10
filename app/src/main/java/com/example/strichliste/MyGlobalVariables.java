@@ -2,15 +2,17 @@ package com.example.strichliste;
 
 import android.app.Application;
 
+import java.nio.file.Path;
+
 public class MyGlobalVariables extends Application {
 
-        private String fileName;
+        private Path fileName;
 
-        public String getFileName() {
+        public Path getFileName() {
             return fileName;
         }
 
-        public void setFileName(String fileName) {
+        public void setFileName(Path fileName) {
             this.fileName = fileName;
         }
     }
