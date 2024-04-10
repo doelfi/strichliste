@@ -24,7 +24,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity {
-    Button btnHueWa;
     ImageButton btnIconSettings;
     ImageView ivLogoGrueneSchleife;
     Button newBtn;
@@ -42,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
         int imageID = getResources().getIdentifier("logo_gruene_schleife", "drawable", getPackageName());
         ivLogoGrueneSchleife.setImageResource(imageID);
 
-        btnHueWa = findViewById(R.id.btnHueWa);
 
         btnIconSettings = findViewById(R.id.btnIconSettings);
 

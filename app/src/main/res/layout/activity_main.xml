@@ -33,36 +33,27 @@
                         android:id="@+id/ivLogoGrueneSchleife"
                         android:layout_width="0dp"
                         android:layout_height="100sp"
-                        android:layout_weight="1"
+                        android:layout_weight="0.2"
+                        tools:srcCompat="@drawable/logo_gruene_schleife" />
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="0.6"
                         tools:srcCompat="@drawable/logo_gruene_schleife" />
 
-                    <androidx.appcompat.widget.AppCompatButton
-                        android:id="@+id/btnHueWa"
-                        android:background="@drawable/fixed_button"
-                        android:layout_width="0dp"
-                        android:layout_height="80sp"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_weight="1"
-                        android:text="@string/text_button_huewa"
-                        android:textColor="@color/white"
-                        android:textSize="24sp"
-                        android:textStyle="bold" />
                     <ImageButton
                         android:id="@+id/btnIconSettings"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_marginTop="20dp"
+                        android:layout_weight="0.2"
                         android:adjustViewBounds="true"
-                        android:maxWidth="100sp"
+                        android:background="@color/white"
+                        android:maxWidth="60sp"
                         android:maxHeight="60sp"
                         android:scaleType="fitCenter"
-                        android:layout_marginLeft="500dp"
-                        android:layout_marginRight="10dp"
-                        android:layout_marginTop="20dp"
-                        android:background="@color/white"
-                        android:src="@drawable/settings_icon"/>
+                        android:src="@drawable/einstellungen_icon" />
+
                 </LinearLayout>
             </TableRow>
 
