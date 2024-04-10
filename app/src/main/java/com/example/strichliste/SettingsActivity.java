@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -63,6 +64,8 @@ public class SettingsActivity extends AppCompatActivity {
     Button btnPickFromFiles;
     String TAG = "SettingsActivity";
     Button btnExportData;
+    ImageButton btnIconHome;
+    ImageView ivLogoGrueneSchleife2;
     BesucherInDatabase besucherInDB;
     GetraenkDatabase getraenkDB;
     TextView tvHint;
@@ -85,6 +88,12 @@ public class SettingsActivity extends AppCompatActivity {
         btnPickFromFiles = findViewById(R.id.btnPickFromFiles);
         btnExportData = findViewById(R.id.btnHint);
 
+        ivLogoGrueneSchleife2 = findViewById(R.id.ivLogoGrueneSchleife2);
+
+
+        btnIconHome = findViewById(R.id.btnIconHome);
+        btnIconHome.setOnClickListener(this::onClick);
+
         btnHueWa.setOnClickListener(this::onClick);
         btnPickFromFiles.setOnClickListener(this::onClick);
         btnExportData.setOnClickListener(this::onClick);
@@ -92,6 +101,7 @@ public class SettingsActivity extends AppCompatActivity {
         receiveDatabase();
         int imageID = getResources().getIdentifier("logo_gruene_schleife", "drawable", getPackageName());
         ivLogoGrueneSchleife.setImageResource(imageID);
+        ivLogoGrueneSchleife2.setImageResource(imageID);
     }
 
         public void receiveDatabase(){
@@ -124,10 +134,11 @@ public class SettingsActivity extends AppCompatActivity {
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
         }
+        else if (view==btnIconHome){
+            Intent intent = new Intent(SettingsActivity.this, MainActivity.class);
+            startActivity(intent);
+        }
         else if (view == btnPickFromFiles){
-            //Toast.makeText(getApplicationContext(), "Lösung: " + companyName, Toast.LENGTH_LONG).show();
-            //String newName;
-            //newName = edText.getText().toString();
 
             if (!checkStoragePermissions()) {
                 requestForStoragePermissions();

@@ -50,6 +50,7 @@ public class ExportDataActivity extends AppCompatActivity {
     Long startTag;
     List<String> gaesteListe;
     ImageButton btnIconHome;
+    ImageButton btnIconSettings;
     ImageView ivLogoGrueneSchleife2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +69,14 @@ public class ExportDataActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ExportDataActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
+        btnIconSettings = findViewById(R.id.btnIconSettings);
+        btnIconSettings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ExportDataActivity.this, SettingsActivity.class);
                 startActivity(intent);
             }
         });
