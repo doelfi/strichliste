@@ -9,6 +9,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Space;
 import android.widget.TableLayout;
@@ -29,6 +31,8 @@ import java.util.concurrent.Executors;
 public class GetraenkeActivity extends AppCompatActivity {
 
     Button newBtn;
+    ImageButton btnIconHome;
+    ImageView ivLogoGrueneSchleife;
     Space newSpace;
     String gastName;
     GastDatabase bestellungDB;
@@ -45,6 +49,19 @@ public class GetraenkeActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         gastName = intent.getStringExtra("gastName");
+
+        ivLogoGrueneSchleife = findViewById(R.id.ivLogoGrueneSchleife);
+        int imageID = getResources().getIdentifier("logo_gruene_schleife", "drawable", getPackageName());
+        ivLogoGrueneSchleife.setImageResource(imageID);
+
+        btnIconHome = findViewById(R.id.btnIconHome);
+        btnIconHome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(GetraenkeActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     public void receiveDatabase(){

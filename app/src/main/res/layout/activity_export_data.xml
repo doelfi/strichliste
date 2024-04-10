@@ -18,7 +18,9 @@
         <ImageView
             android:id="@+id/ivLogoGrueneSchleife"
             android:layout_width="0dp"
-            android:layout_height="100sp"
+            android:layout_height="80sp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             android:layout_weight="0.2"
             tools:srcCompat="@drawable/logo_gruene_schleife" />
 
