@@ -43,9 +43,9 @@ public class ExportDataActivity extends AppCompatActivity {
     Button btnExportData;
     Button btnDeleteGuests;
     ImageView ivLogoGrueneSchleife;
-    GastDatabase gastDB;
     GastDatabase bestellungDB;
     BesucherInDatabase besucherInDB;
+    GetraenkDatabase getraenkDB;
     String TAG = "ExportDataActivity";
     Long startTag;
     List<String> gaesteListe;
@@ -102,7 +102,6 @@ public class ExportDataActivity extends AppCompatActivity {
         });
 
         receiveDatabase();
-        deleteOldDataBase();
     }
 
     public void receiveDatabase() {
@@ -118,9 +117,9 @@ public class ExportDataActivity extends AppCompatActivity {
             }
         };
 
-        gastDB = Room.databaseBuilder(getApplicationContext(), GastDatabase.class, "AstDB").addCallback(mainCallBack).build();
         bestellungDB = Room.databaseBuilder(getApplicationContext(), GastDatabase.class, "BestellungDB").addCallback(mainCallBack).build();
         besucherInDB = Room.databaseBuilder(getApplicationContext(), BesucherInDatabase.class, "BesucherInDB").addCallback(mainCallBack).build();
+        getraenkDB = Room.databaseBuilder(getApplicationContext(), GetraenkDatabase.class, "GetraenkDB").addCallback(mainCallBack).build();
     }
 
     public void deleteGuestDataInBackground(){
@@ -133,8 +132,10 @@ public class ExportDataActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    List<BesucherIn> allGuests = besucherInDB.getBesucherInDAO().getAll();
-                    besucherInDB.getBesucherInDAO().deleteAllBesucherIn(allGuests);
+                    // List<BesucherIn> allGuests = besucherInDB.getBesucherInDAO().getAll();
+                    // besucherInDB.getBesucherInDAO().deleteAllBesucherIn(allGuests);
+                    deleteOldDataBase("BesucherInDB");
+                    deleteOldDataBase("GetraenkDB");
                 } catch (IndexOutOfBoundsException e) {
 
                 }
@@ -266,8 +267,8 @@ public class ExportDataActivity extends AppCompatActivity {
         return millis;
     }
 
-    public void deleteOldDataBase(){
-        boolean deleted = this.deleteDatabase("AstDB");
+    public void deleteOldDataBase(String nameDB){
+        boolean deleted = this.deleteDatabase(nameDB);
         Log.e(TAG, String.valueOf(deleted));
     }
 
