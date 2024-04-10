@@ -60,12 +60,10 @@ import java.util.concurrent.Executors;
 
 public class SettingsActivity extends AppCompatActivity {
 
-    Button btnHueWa;
     Button btnPickFromFiles;
     String TAG = "SettingsActivity";
     Button btnExportData;
     ImageButton btnIconHome;
-    ImageView ivLogoGrueneSchleife2;
     BesucherInDatabase besucherInDB;
     GetraenkDatabase getraenkDB;
     TextView tvHint;
@@ -84,24 +82,18 @@ public class SettingsActivity extends AppCompatActivity {
 
         //edText = findViewById(R.id.edText);
 
-        btnHueWa = findViewById(R.id.btnHueWa);
         btnPickFromFiles = findViewById(R.id.btnPickFromFiles);
         btnExportData = findViewById(R.id.btnHint);
-
-        ivLogoGrueneSchleife2 = findViewById(R.id.ivLogoGrueneSchleife2);
-
 
         btnIconHome = findViewById(R.id.btnIconHome);
         btnIconHome.setOnClickListener(this::onClick);
 
-        btnHueWa.setOnClickListener(this::onClick);
         btnPickFromFiles.setOnClickListener(this::onClick);
         btnExportData.setOnClickListener(this::onClick);
 
         receiveDatabase();
         int imageID = getResources().getIdentifier("logo_gruene_schleife", "drawable", getPackageName());
         ivLogoGrueneSchleife.setImageResource(imageID);
-        ivLogoGrueneSchleife2.setImageResource(imageID);
     }
 
         public void receiveDatabase(){
@@ -121,20 +113,16 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     public void onClick(View view) {
-        if (view == btnHueWa) {
-            /*
-            if (edText.getText().toString().equalsIgnoreCase(companyName)) {
-                currentLevel++;
-                safeLevel();
-                loadLevel();
-            }
-            else {
-                    Toast.makeText(getApplicationContext(), "Leider falsch.", Toast.LENGTH_LONG).show();
-                }*/
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
+        /*
+        if (edText.getText().toString().equalsIgnoreCase(companyName)) {
+            currentLevel++;
+            safeLevel();
+            loadLevel();
         }
-        else if (view==btnIconHome){
+        else {
+                Toast.makeText(getApplicationContext(), "Leider falsch.", Toast.LENGTH_LONG).show();
+            }*/
+        if (view==btnIconHome){
             Intent intent = new Intent(SettingsActivity.this, MainActivity.class);
             startActivity(intent);
         }

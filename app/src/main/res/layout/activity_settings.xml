@@ -18,7 +18,7 @@
         android:orientation="horizontal">
 
         <ImageView
-            android:id="@+id/ivLogoGrueneSchleife2"
+            android:id="@+id/ivLogoGrueneSchleife"
             android:layout_width="0dp"
             android:layout_height="100sp"
             android:layout_weight="0.2"
@@ -44,29 +44,6 @@
             android:src="@drawable/startseite_icon" />
 
     </LinearLayout>
-
-
-    <ImageView
-        android:id="@+id/ivLogoGrueneSchleife"
-        android:layout_width="198dp"
-        android:layout_height="182dp"
-        tools:srcCompat="@drawable/logo_gruene_schleife" />
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btnHueWa"
-        android:background="@drawable/fixed_button"
-        android:layout_width="match_parent"
-        android:layout_height="100sp"
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="30dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginBottom="30dp"
-        android:backgroundTint="@color/gruene_schleife"
-        android:text="@string/text_button_home"
-        android:textColor="@color/white"
-        android:textColorHighlight="@color/white"
-        android:textSize="24sp"
-        android:textStyle="bold" />
 
     <LinearLayout
         android:layout_width="match_parent"
