@@ -1,11 +1,13 @@
 package com.example.strichliste;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -47,6 +49,8 @@ public class ExportDataActivity extends AppCompatActivity {
     String TAG = "ExportDataActivity";
     Long startTag;
     List<String> gaesteListe;
+    ImageButton btnIconHome;
+    ImageView ivLogoGrueneSchleife2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +59,19 @@ public class ExportDataActivity extends AppCompatActivity {
         ivLogoGrueneSchleife = findViewById(R.id.ivLogoGrueneSchleife);
         int imageID = getResources().getIdentifier("logo_gruene_schleife", "drawable", getPackageName());
         ivLogoGrueneSchleife.setImageResource(imageID);
+
+        ivLogoGrueneSchleife2 = findViewById(R.id.ivLogoGrueneSchleife2);
+        ivLogoGrueneSchleife2.setImageResource(imageID);
+
+        btnIconHome = findViewById(R.id.btnIconHome);
+        btnIconHome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ExportDataActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
+
 
         btnExportData = findViewById(R.id.btnExportData);
         btnDeleteGuests = findViewById(R.id.btnDeleteGuests);
