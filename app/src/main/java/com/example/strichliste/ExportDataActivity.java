@@ -51,7 +51,6 @@ public class ExportDataActivity extends AppCompatActivity {
     List<String> gaesteListe;
     ImageButton btnIconHome;
     ImageButton btnIconSettings;
-    ImageView ivLogoGrueneSchleife2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,9 +59,6 @@ public class ExportDataActivity extends AppCompatActivity {
         ivLogoGrueneSchleife = findViewById(R.id.ivLogoGrueneSchleife);
         int imageID = getResources().getIdentifier("logo_gruene_schleife", "drawable", getPackageName());
         ivLogoGrueneSchleife.setImageResource(imageID);
-
-        ivLogoGrueneSchleife2 = findViewById(R.id.ivLogoGrueneSchleife2);
-        ivLogoGrueneSchleife2.setImageResource(imageID);
 
         btnIconHome = findViewById(R.id.btnIconHome);
         btnIconHome.setOnClickListener(new View.OnClickListener() {
