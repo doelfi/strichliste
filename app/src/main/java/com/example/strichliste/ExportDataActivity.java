@@ -1,9 +1,12 @@
 package com.example.strichliste;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -11,6 +14,10 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.room.Room;
@@ -90,7 +97,11 @@ public class ExportDataActivity extends AppCompatActivity {
 
                 File file = path.toFile();
 
-                extractGastDataInBackground(file);
+                if (!checkStoragePermissions()) {
+                    requestForStoragePermissions();
+                } else {
+                    extractGastDataInBackground(file);
+                }
             }
         });
 
@@ -283,5 +294,46 @@ public class ExportDataActivity extends AppCompatActivity {
         bestellungDB.getGastDao().deleteAllGast(alteBestellungen);
         Log.e(TAG, "Alte Bestellungen gelöscht");
     }
+
+
+    public boolean checkStoragePermissions(){
+        // https://medium.com/@kezzieleo/manage-external-storage-permission-android-studio-java-9c3554cf79a7
+        //Android is 11 (R) or above
+        return Environment.isExternalStorageManager();
+    }
+
+
+    private static final int STORAGE_PERMISSION_CODE = 23;
+
+    private void requestForStoragePermissions() {
+        //Android is 11 (R) or above
+        try {
+            Intent intent = new Intent();
+            intent.setAction(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+            Uri uri = Uri.fromParts("package", this.getPackageName(), null);
+            intent.setData(uri);
+            storageActivityResultLauncher.launch(intent);
+        }catch (Exception e){
+            Intent intent = new Intent();
+            intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+            storageActivityResultLauncher.launch(intent);
+        }
+
+    }
+
+    private ActivityResultLauncher<Intent> storageActivityResultLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                    new ActivityResultCallback<ActivityResult>(){
+                        @Override
+                        public void onActivityResult(ActivityResult o) {
+                            //Android is 11 (R) or above
+                            if(Environment.isExternalStorageManager()){
+                                //Manage External Storage Permissions Granted
+                                Log.d(TAG, "onActivityResult: Manage External Storage Permissions Granted");
+                            }else{
+                                Toast.makeText(ExportDataActivity.this, "Storage Permissions Denied", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
 
 }

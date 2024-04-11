@@ -536,7 +536,7 @@ public class SettingsActivity extends AppCompatActivity {
         // https://medium.com/@kezzieleo/manage-external-storage-permission-android-studio-java-9c3554cf79a7
         //Android is 11 (R) or above
         return Environment.isExternalStorageManager();
-}
+    }
 
 
     private static final int STORAGE_PERMISSION_CODE = 23;
